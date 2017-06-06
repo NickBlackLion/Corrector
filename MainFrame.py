@@ -1,4 +1,4 @@
-from tkinter import *
+from CreateCanvas import *
 
 
 # Main window class
@@ -7,7 +7,6 @@ class MainFrame(Frame):
     def __init__(self, master):
         Frame.__init__(self, master=master)
         self.pack()
-        self.checkButtonsVarArray = []
         self.__checkButtonsFrame()
         self.__makeMainTextFrame()
 
@@ -32,11 +31,20 @@ class MainFrame(Frame):
         checkFrame.pack(side=RIGHT, anchor='n', padx=7, pady=7)
 
         with open('checkButtons') as f:
-            for (index, word) in enumerate(f):
+            for word in f:
                 var = IntVar()
-                self.checkButtonsVarArray.append(var)
-                Checkbutton(master=checkFrame, text=word.strip('\n'), variable=var).pack(anchor='w')
+                Checkbutton(variable=var,
+                            master=checkFrame,
+                            text=word.strip('\n'),
+                            command=lambda x=var: StopWord(self).packCanvas(x)).pack(anchor='w')
 
-    # Get array with pressed buttons
-    def getCheckButtonsArray(self):
-        return self.checkButtonsVarArray
+
+class StopWord:
+    def __init__(self, master):
+        self.canvas = Canvas(master=master, width=200, height=200, bg='white')
+
+    def packCanvas(self, var):
+        if var.get():
+            self.canvas.pack(side=RIGHT)
+        else:
+            self.canvas.destroy()
