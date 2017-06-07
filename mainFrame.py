@@ -43,10 +43,10 @@ class MainFrame(Frame):
         canvas.pack(side=LEFT)
 
         correctorsArray = []
-        pointsArray = {}
+        pointsDict = {}
 
         for index in range(7):
-            correctorsArray.append(PackCanvas(canvas, pointsArray))
+            correctorsArray.append(PackCanvas(canvas, pointsDict))
 
         with open('checkButtons') as f:
             for (index, word) in enumerate(f):
