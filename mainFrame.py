@@ -1,5 +1,5 @@
-from CreateCanvas import *
-
+from createCanvas import *
+from packCanvas import *
 
 # Main window class
 class MainFrame(Frame):
@@ -7,7 +7,7 @@ class MainFrame(Frame):
     def __init__(self, master):
         Frame.__init__(self, master=master)
         self.pack()
-        self.__checkButtonsFrame()
+        self.__rightPanelFrame()
         self.__makeMainTextFrame()
 
     # Main text area creating method
@@ -25,26 +25,33 @@ class MainFrame(Frame):
         self.textArea.pack(side=LEFT)
 
     # Frame with check buttons
-    def __checkButtonsFrame(self):
-        checkFrame = Frame(self)
+    def __rightPanelFrame(self):
+        commonFrame = Frame(self)
+        checkFrame = Frame(commonFrame)
+
+        canvas = Canvas(master=commonFrame)
+        scrollCanvas = Scrollbar(master=commonFrame)
+        canvas.config(yscrollcommand=scrollCanvas.set)
+        scrollCanvas.config(command=canvas.yview)
+
+        commonFrame.pack(side=RIGHT, anchor='n')
+
         checkFrame.config(bd=1, relief=SOLID)
-        checkFrame.pack(side=RIGHT, anchor='n', padx=7, pady=7)
+        checkFrame.pack(anchor='w', padx=7, pady=7)
+
+        scrollCanvas.pack(side=RIGHT, expand=YES, fill=Y)
+        canvas.pack(side=LEFT)
+
+        correctorsArray = []
+        pointsArray = {}
+
+        for index in range(7):
+            correctorsArray.append(PackCanvas(canvas, pointsArray))
 
         with open('checkButtons') as f:
-            for word in f:
+            for (index, word) in enumerate(f):
                 var = IntVar()
                 Checkbutton(variable=var,
                             master=checkFrame,
                             text=word.strip('\n'),
-                            command=lambda x=var: StopWord(self).packCanvas(x)).pack(anchor='w')
-
-
-class StopWord:
-    def __init__(self, master):
-        self.canvas = Canvas(master=master, width=200, height=200, bg='white')
-
-    def packCanvas(self, var):
-        if var.get():
-            self.canvas.pack(side=RIGHT)
-        else:
-            self.canvas.destroy()
+                            command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get())).pack(anchor='w')

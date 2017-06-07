@@ -1,4 +1,4 @@
-from FileMenu import *
+from fileMenu import *
 
 class MainMenu:
     def __init__(self, master):

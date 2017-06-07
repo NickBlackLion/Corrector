@@ -1,5 +1,5 @@
-from MainFrame import *
-from MenuBar import *
+from mainFrame import *
+from menuBar import *
 
 if __name__ == '__main__':
     root = Tk()
