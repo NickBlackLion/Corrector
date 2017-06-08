@@ -37,16 +37,17 @@ class MainFrame(Frame):
         commonFrame.pack(side=RIGHT, anchor='n')
 
         checkFrame.config(bd=1, relief=SOLID)
-        checkFrame.pack(anchor='w', padx=7, pady=7)
+        checkFrame.pack(anchor='w', padx=7, pady=7, expand=YES, fill=BOTH)
 
         scrollCanvas.pack(side=RIGHT, expand=YES, fill=Y)
         canvas.pack(side=LEFT)
 
         correctorsArray = []
         pointsDict = {}
+        indexes = []
 
         for index in range(7):
-            correctorsArray.append(PackCanvas(canvas, pointsDict))
+            correctorsArray.append(PackCanvas(canvas, pointsDict, indexes))
 
         with open('checkButtons') as f:
             for (index, word) in enumerate(f):
