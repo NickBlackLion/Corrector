@@ -1,5 +1,6 @@
-from createCanvas import *
+from tkinter import *
 from packCanvas import *
+
 
 # Main window class
 class MainFrame(Frame):
@@ -47,7 +48,7 @@ class MainFrame(Frame):
         indexes = []
 
         for index in range(7):
-            correctorsArray.append(PackCanvas(canvas, pointsDict, indexes))
+            correctorsArray.append(PackCanvas(canvas, pointsDict, indexes, correctorsArray))
 
         with open('checkButtons') as f:
             for (index, word) in enumerate(f):

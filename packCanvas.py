@@ -1,10 +1,10 @@
 # Class that makes hints ans comments on right panel
 class PackCanvas:
-    def __init__(self, canvas, pointsDict, indexes):
+    def __init__(self, canvas, pointsDict, indexes, correctorsArray):
         self.canvas = canvas
         self.pointsDict = pointsDict
         self.indexes = indexes
-        self.count = 0
+        self.correctorsArray = correctorsArray
 
     # Method that adds comments and hints under each other
     def packCanvas(self, var):
@@ -15,14 +15,17 @@ class PackCanvas:
 
         self.count = len(self.indexes)
 
+        for x in self.correctorsArray:
+            x.setCount(self.count)
+
     def __unPackCanvas(self):
         for index in self.pointsDict:
             self.canvas.delete(index)
 
-        self.count -= 1
-
         self.pointsDict.clear()
         self.indexes.clear()
+
+        self.count -= 1
 
         if self.count > 0:
             for x in range(self.count):
@@ -45,4 +48,7 @@ class PackCanvas:
             self.shape = self.canvas.create_rectangle(tuple(li), fill='white')
             self.pointsDict[self.shape] = tuple(li)
             self.indexes.append(self.shape)
-            self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), li[3]))
+            self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), li[3] + 5))
+
+    def setCount(self, count):
+        self.count = count
