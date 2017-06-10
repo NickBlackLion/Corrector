@@ -11,6 +11,19 @@ class MainFrame(Frame):
         self.__rightPanelFrame()
         self.__makeMainTextFrame()
 
+        self.textLength = 0
+        self.isTextSizeChanged = False
+
+    def getTextArea(self):
+        return self.textArea
+
+    def setTextLength(self, textLength):
+        self.textLength = textLength
+        self.__isTextSizeChanged()
+
+    def cancelWorkCycle(self):
+        self.after_cancel(self.__job)
+
     # Main text area creating method
     def __makeMainTextFrame(self):
         textFrame = Frame(master=self)
@@ -57,3 +70,18 @@ class MainFrame(Frame):
                             master=checkFrame,
                             text=word.strip('\n'),
                             command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get())).pack(anchor='w')
+
+    def __isTextSizeChanged(self):
+        if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
+            self.isTextSizeChanged = True
+        print(self.isTextSizeChanged)
+        self.__job = self.after(500, self.__isTextSizeChanged)
+        return self.isTextSizeChanged
+
+    def __resetIsTextSizeChanged(self):
+        self.cancelWorkCycle()
+        self.isTextSizeChanged = False
+
+    def clearTextArea(self):
+        self.textArea.delete('1.0', END)
+        self.__resetIsTextSizeChanged()

@@ -6,6 +6,6 @@ if __name__ == '__main__':
     root.title('Corrector')
 
     mainframe = MainFrame(master=root)
-    MainMenu(master=root)
+    MainMenu(master=root, mainFrame=mainframe)
 
     root.mainloop()
