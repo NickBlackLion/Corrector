@@ -12,17 +12,22 @@ class MainFrame(Frame):
         self.__makeMainTextFrame()
 
         self.textLength = 0
-        self.isTextSizeChanged = False
+        self.__job = None
+        self.setTextLength()
 
     def getTextArea(self):
         return self.textArea
 
-    def setTextLength(self, textLength):
-        self.textLength = textLength
-        self.__isTextSizeChanged()
+    def setTextLength(self, textLength=0):
+        if self.__job is None:
+            self.__resetCheckTextLength(textLength)
+        else:
+            self.after_cancel(self.__job)
+            self.__resetCheckTextLength(textLength)
 
-    def cancelWorkCycle(self):
-        self.after_cancel(self.__job)
+    def clearTextArea(self):
+        self.textArea.delete('1.0', END)
+        self.setTextLength()
 
     # Main text area creating method
     def __makeMainTextFrame(self):
@@ -60,28 +65,22 @@ class MainFrame(Frame):
         pointsDict = {}
         indexes = []
 
-        for index in range(7):
-            correctorsArray.append(PackCanvas(canvas, pointsDict, indexes, correctorsArray))
-
         with open('checkButtons') as f:
             for (index, word) in enumerate(f):
+                correctorsArray.append(PackCanvas(canvas, pointsDict, indexes, correctorsArray))
                 var = IntVar()
                 Checkbutton(variable=var,
                             master=checkFrame,
                             text=word.strip('\n'),
-                            command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get())).pack(anchor='w')
+                            command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get(), self.textArea)).pack(anchor='w')
 
     def __isTextSizeChanged(self):
         if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
             self.isTextSizeChanged = True
-        print(self.isTextSizeChanged)
         self.__job = self.after(500, self.__isTextSizeChanged)
         return self.isTextSizeChanged
 
-    def __resetIsTextSizeChanged(self):
-        self.cancelWorkCycle()
+    def __resetCheckTextLength(self, textLength):
         self.isTextSizeChanged = False
-
-    def clearTextArea(self):
-        self.textArea.delete('1.0', END)
-        self.__resetIsTextSizeChanged()
+        self.textLength = textLength
+        self.__isTextSizeChanged()

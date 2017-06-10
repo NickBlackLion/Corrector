@@ -11,7 +11,7 @@ class FileMenu:
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Вiдкрити', command=lambda: self.__openFile())
         self.fileMenu.add_command(label='Зберегти', command=lambda: self.__saveFile())
-        self.fileMenu.add_command(label='Зберегти як...')
+        self.fileMenu.add_command(label='Зберегти як...', command=lambda: self.__saveAsFile())
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Вийти', command=lambda: self.__exit())
         mainMenu.add_cascade(label='Файл', menu=self.fileMenu)
@@ -21,6 +21,7 @@ class FileMenu:
         self.mainFrame = mainFrame
         self.root = root
         self.textLength = 0
+        self.openFilePath = None
 
     def __openFile(self):
         self.openFilePath = filedialog.askopenfile(filetypes=self.fileTypes)
@@ -33,11 +34,9 @@ class FileMenu:
 
     def __saveFile(self):
         if self.openFilePath:
-            doc = Document()
-            doc.add_paragraph(self.textArea.get('1.0', END).strip('\n'))
-            doc.save(self.openFilePath.name)
-            messagebox.showinfo('Сохранение файла', 'Файл сохранен')
-            self.mainFrame.cancelWorkCycle()
+            self.__save(self.openFilePath.name)
+        else:
+            self.__saveAsFile()
 
     def __newFile(self):
         if self.mainFrame.isTextSizeChanged:
@@ -61,10 +60,15 @@ class FileMenu:
         else:
             self.root.quit()
 
-    def __clearAndSave(self):
-        answer = messagebox.askyesnocancel('', 'Вы изменили текст. Хотите его сохранить?')
-        if answer:
-            self.__saveFile()
-            self.mainFrame.clearTextArea()
-        else:
-            self.mainFrame.clearTextArea()
+    def __saveAsFile(self):
+        self.saveFilePath = filedialog.asksaveasfile(filetypes=self.fileTypes)
+        if self.saveFilePath:
+            self.__save(self.saveFilePath.name)
+
+    def __save(self, pathToFile):
+        doc = Document()
+        doc.add_paragraph(self.textArea.get('1.0', END).strip('\n'))
+        doc.save(str(pathToFile))
+        messagebox.showinfo('Сохранение файла', 'Файл сохранен')
+        for paragraph in doc.paragraphs:
+            self.mainFrame.setTextLength(len(paragraph.text))

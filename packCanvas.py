@@ -1,3 +1,6 @@
+from tkinter import *
+
+
 # Class that makes hints ans comments on right panel
 class PackCanvas:
     def __init__(self, canvas, pointsDict, indexes, correctorsArray):
@@ -7,7 +10,9 @@ class PackCanvas:
         self.correctorsArray = correctorsArray
 
     # Method that adds comments and hints under each other
-    def packCanvas(self, var):
+    def packCanvas(self, var, textArea):
+        self.searcher(var, textArea)
+
         if var:
             self.__createRect()
         else:
@@ -52,3 +57,43 @@ class PackCanvas:
 
     def setCount(self, count):
         self.count = count
+
+    def searcher(self, checkVar, textArea):
+        allRegex = []
+        with open('data.txt') as f:
+            for x in f:
+                allRegex.append(x.strip('\n'))
+
+        text = textArea.get('1.0', END)
+        textRows = re.split('\n', text)
+
+        if checkVar and len(textRows) > 0:
+            row = 1
+
+            for oneTextRow in textRows:
+                for reg in allRegex:
+                    print(oneTextRow)
+                    print(reg)
+                    summ = 0
+                    firstMatched = 0
+                    lastMatched = 0
+
+                    while summ <= len(oneTextRow):
+                        matched = re.search(reg, oneTextRow[summ:])
+
+                        if matched != None:
+                            firstMatched = summ + matched.start()
+                            lastMatched = summ + matched.end()
+
+                            summ += int(matched.end())
+                            textArea.tag_add('start', '{0}.{1}'.format(row, firstMatched),
+                                             '{0}.{1}'.format(row, lastMatched))
+                            textArea.tag_configure('start', background='yellow')
+                            textArea.tag_raise("sel")
+
+                        if not lastMatched or matched is None:
+                            break
+
+                row += 1
+        else:
+            textArea.tag_delete('start')
