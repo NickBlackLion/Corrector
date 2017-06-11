@@ -1,5 +1,6 @@
 from mainFrame import *
 from menuBar import *
+from editMenu import *
 
 if __name__ == '__main__':
     root = Tk()

@@ -9,7 +9,7 @@ class FileMenu:
         self.fileMenu = Menu(mainMenu, tearoff=0)
         self.fileMenu.add_command(label='Новий', command=lambda: self.__newFile())
         self.fileMenu.add_separator()
-        self.fileMenu.add_command(label='Вiдкрити', command=lambda: self.__openFile())
+        self.fileMenu.add_command(label='Вiдкрити Ctrl+O', command=lambda: self.__openFile())
         self.fileMenu.add_command(label='Зберегти', command=lambda: self.__saveFile())
         self.fileMenu.add_command(label='Зберегти як...', command=lambda: self.__saveAsFile())
         self.fileMenu.add_separator()
@@ -22,6 +22,10 @@ class FileMenu:
         self.root = root
         self.textLength = 0
         self.openFilePath = None
+
+        root.bind('<Control-o>', lambda e: self.__openFile())
+        root.bind('<Control-s>', lambda e: self.__saveFile())
+        root.bind('<Control-n>', lambda e: self.__newFile())
 
     def __openFile(self):
         self.openFilePath = filedialog.askopenfile(filetypes=self.fileTypes)
@@ -40,22 +44,26 @@ class FileMenu:
 
     def __newFile(self):
         if self.mainFrame.isTextSizeChanged:
-            answer = messagebox.askyesnocancel('', 'Вы изменили текст. Хотите его сохранить?')
-            if answer:
+            answer = messagebox.askyesnocancel('Новый файл', 'Вы изменили текст. Хотите его сохранить?')
+            if answer is None:
+                pass
+            elif answer:
                 self.__saveFile()
                 self.mainFrame.clearTextArea()
-            else:
+            elif not answer:
                 self.mainFrame.clearTextArea()
         else:
-            self.textArea.delete('1.0', END)
+            self.mainFrame.clearTextArea()
 
     def __exit(self):
         if self.mainFrame.isTextSizeChanged:
-            answer = messagebox.askyesnocancel('', 'Вы изменили текст. Хотите его сохранить?')
-            if answer:
+            answer = messagebox.askyesnocancel('Выход', 'Вы изменили текст. Хотите его сохранить?')
+            if answer is None:
+                pass
+            elif answer:
                 self.__saveFile()
                 self.root.quit()
-            else:
+            elif not answer:
                 self.root.quit()
         else:
             self.root.quit()
