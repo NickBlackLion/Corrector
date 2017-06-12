@@ -7,10 +7,10 @@ from docx import Document
 class FileMenu:
     def __init__(self, root, mainMenu=None, mainFrame=None):
         self.fileMenu = Menu(mainMenu, tearoff=0)
-        self.fileMenu.add_command(label='Новий', command=lambda: self.__newFile())
+        self.fileMenu.add_command(label='Новий Ctrl+N', command=lambda: self.__newFile())
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Вiдкрити Ctrl+O', command=lambda: self.__openFile())
-        self.fileMenu.add_command(label='Зберегти', command=lambda: self.__saveFile())
+        self.fileMenu.add_command(label='Зберегти Ctrl+S', command=lambda: self.__saveFile())
         self.fileMenu.add_command(label='Зберегти як...', command=lambda: self.__saveAsFile())
         self.fileMenu.add_separator()
         self.fileMenu.add_command(label='Вийти', command=lambda: self.__exit())

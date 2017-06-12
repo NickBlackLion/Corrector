@@ -7,6 +7,6 @@ class MainMenu:
     def __init__(self, master, mainFrame=None):
         self.mainMenu = Menu(master=master)
         self.fileMenu = FileMenu(master, self.mainMenu, mainFrame)
-        self.editMenu = EditMenu(mainMenu=self.mainMenu)
+        self.editMenu = EditMenu(master, self.mainMenu, mainFrame)
         self.specialMenu = SpecialMenu(mainMenu=self.mainMenu)
         master.config(menu=self.mainMenu)
