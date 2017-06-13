@@ -62,16 +62,20 @@ class MainFrame(Frame):
         canvas.pack(side=LEFT)
 
         correctorsArray = []
-        pointsDict = {}
-        indexes = []
+        pointsArray = []
+        hintsDict = {}
+        colorDict = {}
+        color = ['green', '#1283FF', '#AC8312', 'yellow', 'blue', 'red', 'brown']
 
-        with open('checkButtons') as f:
+        with open('categoryes', encoding='utf-8') as f:
             for (index, word) in enumerate(f):
-                correctorsArray.append(PackCanvas(canvas, pointsDict, indexes, correctorsArray))
+                stripWord = word.strip('\n')
+                colorDict[stripWord] = color[index]
+                correctorsArray.append(PackCanvas(canvas, pointsArray, correctorsArray, hintsDict, stripWord, colorDict))
                 var = IntVar()
                 Checkbutton(variable=var,
                             master=checkFrame,
-                            text=word.strip('\n'),
+                            text=stripWord,
                             command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get(), self.textArea)).pack(anchor='w')
 
     def __isTextSizeChanged(self):

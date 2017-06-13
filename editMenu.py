@@ -4,8 +4,8 @@ from tkinter import *
 class EditMenu:
     def __init__(self, root, mainMenu, mainFrame):
         self.commandArray = ['Вырезать Ctrl+X', 'Копировать Ctrl+C', 'Вставить Ctrl+V', 'Отменить Ctrl+Z']
-        self.commandDict = {self.commandArray[0]: lambda: self.__cutToClipboard,
-                            self.commandArray[1]: lambda: self.__copyToClipboard,
+        self.commandDict = {self.commandArray[0]: lambda: self.__cutToClipboard(),
+                            self.commandArray[1]: lambda: self.__copyToClipboard(),
                             self.commandArray[2]: lambda: self.__pasteFromClipboard()}
         self.editMenu = Menu(mainMenu, tearoff=0)
         self.editMenu.add_command(label=self.commandArray[3])

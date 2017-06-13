@@ -3,92 +3,92 @@ from tkinter import *
 
 # Class that makes hints ans comments on right panel
 class PackCanvas:
-    def __init__(self, canvas, pointsDict, indexes, correctorsArray):
+    def __init__(self, canvas, pointsArray, correctorsArray, hintsDict, categoryName, colorDict):
         self.canvas = canvas
-        self.pointsDict = pointsDict
-        self.indexes = indexes
+        self.pointsArray = pointsArray
         self.correctorsArray = correctorsArray
+        self.hintsDict = hintsDict
+        self.categoryName = categoryName
+        self.colorDict = colorDict
 
     # Method that adds comments and hints under each other
     def packCanvas(self, var, textArea):
-        self.searcher(var, textArea)
-
         if var:
-            self.__createRect()
+            self.__createPoints()
+            self.__createShape(self.pointsArray[-1], self.categoryName, self.colorDict[self.categoryName])
+            self.__searcher(var, textArea, self.categoryName, self.colorDict[self.categoryName])
         else:
+            self.__searcher(var, textArea, self.categoryName, self.colorDict[self.categoryName])
             self.__unPackCanvas()
 
-        self.count = len(self.indexes)
-
-        for x in self.correctorsArray:
-            x.setCount(self.count)
-
     def __unPackCanvas(self):
-        for index in self.pointsDict:
-            self.canvas.delete(index)
+        for index in self.hintsDict:
+            self.canvas.delete(self.hintsDict[index])
 
-        self.pointsDict.clear()
-        self.indexes.clear()
+        del self.hintsDict[self.categoryName]
 
-        self.count -= 1
+        self.pointsArray.clear()
 
-        if self.count > 0:
-            for x in range(self.count):
-                self.__createRect()
+        for x in range(len(self.hintsDict)):
+            self.__createPoints()
 
-    def __createRect(self):
-        if len(self.pointsDict) == 0:
+        if len(self.pointsArray) > 0:
+            for value, mapIndex in zip(self.pointsArray, self.hintsDict):
+                self.__createShape(value, mapIndex, self.colorDict[mapIndex])
+
+    def __createPoints(self):
+        if len(self.pointsArray) == 0:
             tup = (2, 2, self.canvas.winfo_width() - 5, self.canvas.winfo_height() / 2)
-            self.shape = self.canvas.create_rectangle(tup, fill='white')
-            self.pointsDict[self.shape] = tup
-            self.indexes.append(self.shape)
+            self.pointsArray.append(tup)
         else:
-            li = list(self.pointsDict[self.indexes[len(self.indexes) - 1]])
+            li = list(self.pointsArray[-1])
             for (i, j) in enumerate(li, start=1):
                 if i % 2 == 0:
-                    li[i-1] = j + self.canvas.winfo_height() / 2 + 5
+                    li[i - 1] = j + self.canvas.winfo_height() / 2 + 5
                 else:
-                    li[i-1] = j
+                    li[i - 1] = j
 
-            self.shape = self.canvas.create_rectangle(tuple(li), fill='white')
-            self.pointsDict[self.shape] = tuple(li)
-            self.indexes.append(self.shape)
-            self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), li[3] + 5))
+            self.pointsArray.append(tuple(li))
 
-    def setCount(self, count):
-        self.count = count
+    def __createShape(self, coordinate, categoryName, color):
+        self.shape = self.canvas.create_rectangle(coordinate, fill=color)
+        self.canvas.config(scrollregion=(0, 0, self.canvas.winfo_width(), self.pointsArray[-1][-1] + 5))
+        self.hintsDict[categoryName] = self.shape
 
-    def searcher(self, checkVar, textArea):
+    def __searcher(self, var, textArea, categoryName=None, color=None):
         allRegex = []
-        with open('data.txt') as f:
+        with open(categoryName.strip('\n') + '.txt', 'rb') as f:
             for x in f:
-                allRegex.append(x.strip('\n'))
+                decodeStr = x.decode('utf-8')
+                allRegex.append(decodeStr.strip('\n\r'))
+
+        print(allRegex)
 
         text = textArea.get('1.0', END)
         textRows = re.split('\n', text)
 
-        if checkVar and len(textRows) > 0:
+        if var and len(textRows) > 0:
             row = 1
 
             for oneTextRow in textRows:
                 for reg in allRegex:
-                    print(oneTextRow)
-                    print(reg)
                     summ = 0
                     firstMatched = 0
                     lastMatched = 0
 
+                    print(reg)
+
                     while summ <= len(oneTextRow):
-                        matched = re.search(reg, oneTextRow[summ:])
+                        matched = re.search(reg, oneTextRow[summ:], re.IGNORECASE)
 
                         if matched != None:
                             firstMatched = summ + matched.start()
                             lastMatched = summ + matched.end()
 
                             summ += int(matched.end())
-                            textArea.tag_add('start', '{0}.{1}'.format(row, firstMatched),
+                            textArea.tag_add(categoryName.strip('\n'), '{0}.{1}'.format(row, firstMatched),
                                              '{0}.{1}'.format(row, lastMatched))
-                            textArea.tag_configure('start', background='yellow')
+                            textArea.tag_configure(categoryName.strip('\n'), background=color)
                             textArea.tag_raise("sel")
 
                         if not lastMatched or matched is None:
@@ -96,4 +96,4 @@ class PackCanvas:
 
                 row += 1
         else:
-            textArea.tag_delete('start')
+            textArea.tag_delete(categoryName.strip('\n'))
