@@ -43,7 +43,7 @@ class FileMenu:
             self.__saveAsFile()
 
     def __newFile(self):
-        if self.mainFrame.isTextSizeChanged:
+        if self.mainFrame.isTextSizeChanged():
             answer = messagebox.askyesnocancel('Новый файл', 'Вы изменили текст. Хотите его сохранить?')
             if answer is None:
                 pass
@@ -56,7 +56,7 @@ class FileMenu:
             self.mainFrame.clearTextArea()
 
     def __exit(self):
-        if self.mainFrame.isTextSizeChanged:
+        if self.mainFrame.isTextSizeChanged():
             answer = messagebox.askyesnocancel('Выход', 'Вы изменили текст. Хотите его сохранить?')
             if answer is None:
                 pass

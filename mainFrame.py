@@ -78,13 +78,14 @@ class MainFrame(Frame):
                             text=stripWord,
                             command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get(), self.textArea)).pack(anchor='w')
 
-    def __isTextSizeChanged(self):
+    def isTextSizeChanged(self):
         if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
-            self.isTextSizeChanged = True
-        self.__job = self.after(500, self.__isTextSizeChanged)
-        return self.isTextSizeChanged
+            self.textSizeChanged = True
+        self.__job = self.after(500, self.isTextSizeChanged)
+        print(self.__job)
+        return self.textSizeChanged
 
     def __resetCheckTextLength(self, textLength):
-        self.isTextSizeChanged = False
+        self.textSizeChanged = False
         self.textLength = textLength
-        self.__isTextSizeChanged()
+        self.isTextSizeChanged()

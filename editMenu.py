@@ -37,13 +37,32 @@ class EditMenu:
         return popup
 
     def __copyToClipboard(self):
-        self.root.clipboard_clear()
-        self.root.clipboard_append(self.textArea.get(SEL_FIRST, SEL_LAST))
+        try:
+            fromClipboard = self.root.clipboard_get()
+        except TclError:
+            fromClipboard = ''
+
+        try:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(self.textArea.get(SEL_FIRST, SEL_LAST))
+        except TclError:
+            self.root.clipboard_append(fromClipboard)
 
     def __pasteFromClipboard(self):
-        self.textArea.insert(CURRENT, self.root.clipboard_get())
+        try:
+            self.textArea.insert(CURRENT, self.root.clipboard_get())
+        except TclError:
+            pass
 
     def __cutToClipboard(self):
-        self.root.clipboard_clear()
-        self.root.clipboard_append(self.textArea.get(SEL_FIRST, SEL_LAST))
-        self.textArea.delete(SEL_FIRST, SEL_LAST)
+        try:
+            fromClipboard = self.root.clipboard_get()
+        except TclError:
+            fromClipboard = ''
+
+        try:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(self.textArea.get(SEL_FIRST, SEL_LAST))
+            self.textArea.delete(SEL_FIRST, SEL_LAST)
+        except TclError:
+            self.root.clipboard_append(fromClipboard)
