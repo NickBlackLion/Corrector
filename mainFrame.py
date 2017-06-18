@@ -1,4 +1,3 @@
-from tkinter import *
 from packCanvas import *
 
 
@@ -60,29 +59,25 @@ class MainFrame(Frame):
         scrollCanvas.pack(side=RIGHT, expand=YES, fill=Y)
         canvas.pack(side=LEFT)
 
-        correctorsArray = []
         pointsArray = []
-        hintsDict = {}
         colorDict = {}
         color = ['green', '#1283FF', '#AC8312', 'yellow', 'blue', 'red', 'brown']
 
         with open('categoryes', encoding='utf-8') as f:
             for (index, word) in enumerate(f):
-                stripWord = word.strip('\n')
-                colorDict[stripWord] = color[index]
-                correctorsArray.append(PackCanvas(canvas, pointsArray, correctorsArray, hintsDict, stripWord, colorDict))
+                category = word.strip('\n')
+                colorDict[category] = color[index]
+                corrector = PackCanvas(canvas, pointsArray, category, colorDict)
                 var = IntVar()
                 Checkbutton(variable=var,
                             master=checkFrame,
-                            text=stripWord,
-                            command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get(), self.textArea)).pack(anchor='w')
+                            text=category,
+                            command=lambda x=var, y=corrector: y.packCanvas(x.get(), self.textArea)).pack(anchor='w')
 
     def __isTextSizeChanged(self):
         if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
             self.textSizeChanged = True
-            print('in if')
         self.__job = self.after(500, self.__isTextSizeChanged)
-        print(self.__job, self.textSizeChanged)
 
     def isTextChanged(self):
         return self.textSizeChanged

@@ -1,23 +1,23 @@
 from tkinter import END
 from tkinter import messagebox
 import re
+import shelve
 
 
-def searcher(var, textArea, allRegex, func1, func2, categoryName=None, color=None):
+def searcher(var, textArea, PackCanvas):
     if var:
         f = None
 
         try:
-            f = open(categoryName, 'r', encoding='utf-8')
+            f = shelve.open(getattr(PackCanvas, 'categoryName'))
+            f['забезпеч\w+'] = 'Можливо, переробити речення'
             for i in f:
-                allRegex.append(i.strip('\r\n'))
-        except FileNotFoundError:
-            open(categoryName, 'w').close()
-        finally:
-            if f is not None:
-                f.close()
+                getattr(PackCanvas, 'allRegex')[i] = f[i]
 
-        if not allRegex and var:
+        finally:
+            f.close()
+
+        if not getattr(PackCanvas, 'allRegex') and var:
             messagebox.showinfo('Пустая таблица',
                                 'Таблица данной категории не заполнена\nДля работы внесите хотя бы одно слово')
 
@@ -28,7 +28,7 @@ def searcher(var, textArea, allRegex, func1, func2, categoryName=None, color=Non
             row = 1
 
             for oneTextRow in textRows:
-                for reg in allRegex:
+                for reg in getattr(PackCanvas, 'allRegex'):
                     summ = 0
                     firstMatched = 0
                     lastMatched = 0
@@ -45,16 +45,17 @@ def searcher(var, textArea, allRegex, func1, func2, categoryName=None, color=Non
                             textArea.tag_add('text', '{0}.{1}'.format(row, lastMatched), END)
                             textArea.tag_add(reg, '{0}.{1}'.format(row, firstMatched),
                                              '{0}.{1}'.format(row, lastMatched))
-                            textArea.tag_configure(reg, background=color)
+                            textArea.tag_configure(reg, background=getattr(PackCanvas, 'color'))
                             textArea.tag_raise("sel")
+                            setattr(PackCanvas, 'hint', getattr(PackCanvas, 'allRegex')[reg])
 
                         if not lastMatched or matched is None:
                             break
 
-                    textArea.tag_bind(reg, '<Button-1>', func1)
-                    textArea.tag_bind('text', '<Button-1>', func2)
+                    textArea.tag_bind(reg, '<Button-1>', getattr(PackCanvas, 'createFoo'))
+                    textArea.tag_bind('text', '<Button-1>', getattr(PackCanvas, 'deleteFoo'))
 
                 row += 1
     else:
-        for reg in allRegex:
+        for reg in getattr(PackCanvas, 'allRegex'):
             textArea.tag_delete(reg)

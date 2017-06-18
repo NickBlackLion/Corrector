@@ -4,33 +4,37 @@ from searcher import *
 
 # Class that makes hints ans comments on right panel
 class PackCanvas:
-    def __init__(self, canvas, pointsArray, correctorsArray, hintsDict, categoryName, colorDict):
+    def __init__(self, canvas, pointsArray, categoryName, colorDict):
         self.canvas = canvas
+
         self.pointsArray = pointsArray
-        self.correctorsArray = correctorsArray
-        self.hintsDict = hintsDict
         self.categoryName = categoryName
-        self.colorDict = colorDict
-        self.allRegex = []
+        self.color = colorDict[categoryName]
+
+        self.allRegex = {}
+        self.createFoo = self.__createHint
+        self.deleteFoo = self.__deleteHint
+        self.hint = None
 
     # Method that adds comments and hints under each other
     def packCanvas(self, var, textArea):
         if var:
-            searcher(var, textArea, self.allRegex, self.__createHint, self.__deleteHint, self.categoryName, self.colorDict[self.categoryName])
+            searcher(var, textArea, self)
         else:
-            searcher(var, textArea, self.allRegex, self.__createHint, self.__deleteHint, self.categoryName, self.colorDict[self.categoryName])
+            searcher(var, textArea, self)
             self.__deleteHint()
             self.allRegex.clear()
 
     def __createHint(self, event=None):
         if len(self.pointsArray) == 0:
             tup = (2, 2, self.canvas.winfo_width() - 5, self.canvas.winfo_height() - 5)
+            tup1 = (10, 10)
 
         self.shape = self.canvas.create_rectangle(tup, fill='white')
-        self.hintsDict[self.categoryName] = self.shape
+        self.text = self.canvas.create_text(tup1, anchor=NW, text=self.hint)
 
     def __deleteHint(self, event=None):
-        for index in self.hintsDict:
-            self.canvas.delete(self.hintsDict[index])
+        self.canvas.delete(self.shape)
+        self.canvas.delete(self.text)
 
         self.pointsArray.clear()
