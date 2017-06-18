@@ -13,17 +13,15 @@ class MainFrame(Frame):
 
         self.textLength = 0
         self.__job = None
-        self.setTextLength()
+        self.textSizeChanged = False
+
+        self.__isTextSizeChanged()
 
     def getTextArea(self):
         return self.textArea
 
     def setTextLength(self, textLength=0):
-        if self.__job is None:
-            self.__resetCheckTextLength(textLength)
-        else:
-            self.after_cancel(self.__job)
-            self.__resetCheckTextLength(textLength)
+        self.textLength = textLength
 
     def clearTextArea(self):
         self.textArea.delete('1.0', END)
@@ -78,14 +76,13 @@ class MainFrame(Frame):
                             text=stripWord,
                             command=lambda x=var, y=correctorsArray[index]: y.packCanvas(x.get(), self.textArea)).pack(anchor='w')
 
-    def isTextSizeChanged(self):
+    def __isTextSizeChanged(self):
         if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
             self.textSizeChanged = True
-        self.__job = self.after(500, self.isTextSizeChanged)
-        print(self.__job)
-        return self.textSizeChanged
+        else:
+            self.textSizeChanged = False
+        self.__job = self.after(500, self.__isTextSizeChanged)
+        print(self.__job, self.textSizeChanged)
 
-    def __resetCheckTextLength(self, textLength):
-        self.textSizeChanged = False
-        self.textLength = textLength
-        self.isTextSizeChanged()
+    def isTextChanged(self):
+        return self.textSizeChanged

@@ -28,6 +28,18 @@ class FileMenu:
         root.bind('<Control-n>', lambda e: self.__newFile())
 
     def __openFile(self):
+        if self.mainFrame.isTextChanged():
+            answer = messagebox.askyesnocancel('Открытие файла', 'Вы изменили текст. Хотите его сохранить?')
+            if answer is None:
+                pass
+            elif answer:
+                self.__saveFile()
+                self.mainFrame.clearTextArea()
+            elif not answer:
+                self.mainFrame.clearTextArea()
+        else:
+            self.mainFrame.clearTextArea()
+
         self.openFilePath = filedialog.askopenfile(filetypes=self.fileTypes)
         if self.openFilePath:
             doc = Document(self.openFilePath.name)
@@ -43,20 +55,23 @@ class FileMenu:
             self.__saveAsFile()
 
     def __newFile(self):
-        if self.mainFrame.isTextSizeChanged():
+        if self.mainFrame.isTextChanged():
             answer = messagebox.askyesnocancel('Новый файл', 'Вы изменили текст. Хотите его сохранить?')
             if answer is None:
                 pass
             elif answer:
                 self.__saveFile()
                 self.mainFrame.clearTextArea()
+                self.openFilePath = None
             elif not answer:
                 self.mainFrame.clearTextArea()
+                self.openFilePath = None
         else:
             self.mainFrame.clearTextArea()
+            self.openFilePath = None
 
     def __exit(self):
-        if self.mainFrame.isTextSizeChanged():
+        if self.mainFrame.isTextChanged():
             answer = messagebox.askyesnocancel('Выход', 'Вы изменили текст. Хотите его сохранить?')
             if answer is None:
                 pass
