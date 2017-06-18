@@ -25,7 +25,8 @@ class MainFrame(Frame):
 
     def clearTextArea(self):
         self.textArea.delete('1.0', END)
-        self.setTextLength()
+        self.textSizeChanged = False
+        self.textLength = 0
 
     # Main text area creating method
     def __makeMainTextFrame(self):
@@ -79,10 +80,12 @@ class MainFrame(Frame):
     def __isTextSizeChanged(self):
         if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
             self.textSizeChanged = True
-        else:
-            self.textSizeChanged = False
+            print('in if')
         self.__job = self.after(500, self.__isTextSizeChanged)
         print(self.__job, self.textSizeChanged)
 
     def isTextChanged(self):
         return self.textSizeChanged
+
+    def resetTextSizeChanged(self):
+        self.textSizeChanged = False
