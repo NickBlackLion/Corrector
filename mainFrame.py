@@ -6,14 +6,15 @@ class MainFrame(Frame):
     # init method
     def __init__(self, master):
         Frame.__init__(self, master=master)
-        self.pack()
-        self.__rightPanelFrame()
-        self.__makeMainTextFrame()
 
         self.textLength = 0
         self.__job = None
         self.textSizeChanged = False
+        self.categories = []
 
+        self.pack()
+        self.__makeMainTextFrame()
+        self.__rightPanelFrame()
         self.__isTextSizeChanged()
 
     def getTextArea(self):
@@ -46,28 +47,20 @@ class MainFrame(Frame):
         commonFrame = Frame(self)
         checkFrame = Frame(commonFrame)
 
+        checkFrame.config(bd=1, relief=SOLID)
+        checkFrame.pack(anchor='w', padx=7, pady=7, expand=YES, fill=BOTH)
         canvas = Canvas(master=commonFrame)
-        scrollCanvas = Scrollbar(master=commonFrame)
-        canvas.config(yscrollcommand=scrollCanvas.set)
-        scrollCanvas.config(command=canvas.yview)
+        canvas.pack()
 
         commonFrame.pack(side=RIGHT, anchor='n')
 
-        checkFrame.config(bd=1, relief=SOLID)
-        checkFrame.pack(anchor='w', padx=7, pady=7, expand=YES, fill=BOTH)
-
-        scrollCanvas.pack(side=RIGHT, expand=YES, fill=Y)
-        canvas.pack(side=LEFT)
-
-        pointsArray = []
-        colorDict = {}
         color = ['green', '#1283FF', '#AC8312', 'yellow', 'blue', 'red', 'brown']
 
         with open('categoryes', encoding='utf-8') as f:
             for (index, word) in enumerate(f):
                 category = word.strip('\n')
-                colorDict[category] = color[index]
-                corrector = PackCanvas(canvas, pointsArray, category, colorDict)
+                self.categories.append(category)
+                corrector = PackCanvas(canvas, category, color[index])
                 var = IntVar()
                 Checkbutton(variable=var,
                             master=checkFrame,
@@ -84,3 +77,6 @@ class MainFrame(Frame):
 
     def resetTextSizeChanged(self):
         self.textSizeChanged = False
+
+    def getCategoryes(self):
+        return self.categories

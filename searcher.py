@@ -10,9 +10,8 @@ def searcher(var, textArea, PackCanvas):
 
         try:
             f = shelve.open(getattr(PackCanvas, 'categoryName'))
-            f['забезпеч\w+'] = 'Можливо, переробити речення'
             for i in f:
-                getattr(PackCanvas, 'allRegex')[i] = f[i]
+                getattr(PackCanvas, 'allRegex')[i.strip('\n')] = f[i]
 
         finally:
             f.close()

@@ -1,18 +1,13 @@
 from tkinter import *
 import shelve
+from tkinter import messagebox
 
 
 class SpecialMenu:
     def __init__(self, root, mainMenu, mainFrame):
-        labels = ['Добавить стоп-слово',
-                  'Добавить повторяемое слово',
-                  'Добавить устоявшиеся выражения и русизмы',
-                  'Добавить чередования',
-                  'Добавить синонимы']
-
         self.specialMenu = Menu(mainMenu, tearoff=0)
-        for value in labels:
-            self.specialMenu.add_command(label=value, command=lambda lab=value: self.__makeCommonWindow(lab))
+        for value in mainFrame.getCategoryes():
+            self.specialMenu.add_command(label='Добавить {0}'.format(value.lower()), command=lambda lab=value: self.__makeCommonWindow(lab))
         mainMenu.add_cascade(label='Специальные функции', menu=self.specialMenu)
 
         self.root = root
@@ -29,12 +24,12 @@ class SpecialMenu:
         self.padConf = {'padx': 5, 'pady': 5, 'expand': YES, 'fill': BOTH}
 
     def __makeCommonWindow(self, label):
-        top = Toplevel(master=self.root)
-        top.title(label)
+        self.top = Toplevel(master=self.root)
+        self.top.title('Добавить {0}'.format(label.lower()))
 
-        self.__makeHelpButtons(top)
-        self.__makeEntryFrame(top)
-        self.__makeOkCancelButton(top)
+        self.__makeHelpButtons(self.top)
+        self.__makeEntryFrame(self.top)
+        self.__makeOkCancelButton(self.top, label)
 
     def __makeEntryFrame(self, master):
         areaSize = {'width': 70, 'height': 10}
@@ -43,18 +38,18 @@ class SpecialMenu:
         entryFrame.pack(self.padConf)
 
         Label(entryFrame, text='Шаблон поиска').pack()
-        self.text = Text(entryFrame, areaSize)
-        self.text.pack(expand=YES, fill=X)
+        self.pattern = Text(entryFrame, areaSize)
+        self.pattern.pack(expand=YES, fill=X)
 
         Label(entryFrame, text='Комментарий').pack()
         self.hint = Text(entryFrame, areaSize)
         self.hint.pack(expand=YES, fill=X)
 
-    def __makeOkCancelButton(self, master):
+    def __makeOkCancelButton(self, master, label):
         okCancelButtonFrame = Frame(master)
         okCancelButtonFrame.pack(self.padConf)
 
-        Button(okCancelButtonFrame, text='Ok').pack(side=LEFT, expand=YES, fill=X)
+        Button(okCancelButtonFrame, text='Ok', command=lambda: self.__insertIntoDB(label)).pack(side=LEFT, expand=YES, fill=X)
         Button(okCancelButtonFrame, text='Cancel', command=lambda: master.destroy()).pack(side=LEFT, expand=YES, fill=X)
 
     def __makeHelpButtons(self, master):
@@ -77,7 +72,10 @@ class SpecialMenu:
                command=lambda string=self.either: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
 
     def __takeStrings(self, mark):
-        self.text.insert(END, mark)
+        self.pattern.insert(END, mark)
 
     def __insertIntoDB(self, dbName):
-        pass
+        with shelve.open(dbName) as f:
+            f[self.pattern.get('1.0', END)] = self.hint.get('1.0', END)
+        messagebox.showinfo('', 'Слово добавленно в базу')
+        self.top.destroy()
