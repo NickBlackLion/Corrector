@@ -1,16 +1,25 @@
-from tkinter import *
 import shelve
-from tkinter import messagebox
+from clipboardHandler import *
 
 
 class SpecialMenu:
     def __init__(self, root, mainMenu, mainFrame):
+        self.commandArray = ['Вырезать Ctrl+X', 'Копировать Ctrl+C', 'Вставить Ctrl+V', 'Отменить Ctrl+Z']
+        self.patternDict = {self.commandArray[0]: lambda: cutToClipboard(self.root, self.pattern),
+                            self.commandArray[1]: lambda: copyToClipboard(self.root, self.pattern),
+                            self.commandArray[2]: lambda: pasteFromClipboard(self.root, self.pattern)}
+
+        self.hintDict = {self.commandArray[0]: lambda: cutToClipboard(self.root, self.hint),
+                         self.commandArray[1]: lambda: copyToClipboard(self.root, self.hint),
+                         self.commandArray[2]: lambda: pasteFromClipboard(self.root, self.hint)}
+
         self.specialMenu = Menu(mainMenu, tearoff=0)
-        for value in mainFrame.getCategoryes():
+        for value in mainFrame.getCategories():
             self.specialMenu.add_command(label='Добавить {0}'.format(value.lower()), command=lambda lab=value: self.__makeCommonWindow(lab))
         mainMenu.add_cascade(label='Специальные функции', menu=self.specialMenu)
 
         self.root = root
+        self.mainFrame = mainFrame
 
         self.vowels = '[аеєиіїоуюя]'
         self.consonants = '[бвгґджзйклмнпрстфхцчшщ]'
@@ -40,10 +49,12 @@ class SpecialMenu:
         Label(entryFrame, text='Шаблон поиска').pack()
         self.pattern = Text(entryFrame, areaSize)
         self.pattern.pack(expand=YES, fill=X)
+        self.pattern.bind('<Button-3>', self.__doPatternPopup)
 
         Label(entryFrame, text='Комментарий').pack()
         self.hint = Text(entryFrame, areaSize)
         self.hint.pack(expand=YES, fill=X)
+        self.hint.bind('<Button-3>', self.__doHintPopup)
 
     def __makeOkCancelButton(self, master, label):
         okCancelButtonFrame = Frame(master)
@@ -79,3 +90,25 @@ class SpecialMenu:
             f[self.pattern.get('1.0', END)] = self.hint.get('1.0', END)
         messagebox.showinfo('', 'Слово добавленно в базу')
         self.top.destroy()
+
+    def __doPatternPopup(self, event):
+        self.__createPatternPopupMenu().tk_popup(event.x_root, event.y_root)
+
+    def __doHintPopup(self, event):
+        self.__createHintPopupMenu().tk_popup(event.x_root, event.y_root)
+
+    def __createPatternPopupMenu(self):
+        popup = Menu(master=self.root, tearoff=0)
+        popup.add_command(label=self.commandArray[3], command=self.patternDict[self.commandArray[3]])
+        popup.add_command(label=self.commandArray[0], command=self.patternDict[self.commandArray[0]])
+        popup.add_command(label=self.commandArray[1], command=self.patternDict[self.commandArray[1]])
+        popup.add_command(label=self.commandArray[2], command=self.patternDict[self.commandArray[2]])
+        return popup
+
+    def __createHintPopupMenu(self):
+        popup = Menu(master=self.root, tearoff=0)
+        popup.add_command(label=self.commandArray[3], command=self.hintDict[self.commandArray[3]])
+        popup.add_command(label=self.commandArray[0], command=self.hintDict[self.commandArray[0]])
+        popup.add_command(label=self.commandArray[1], command=self.hintDict[self.commandArray[1]])
+        popup.add_command(label=self.commandArray[2], command=self.hintDict[self.commandArray[2]])
+        return popup

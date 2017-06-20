@@ -95,3 +95,5 @@ class FileMenu:
         messagebox.showinfo('Сохранение файла', 'Файл сохранен')
         for paragraph in doc.paragraphs:
             self.mainFrame.setTextLength(len(paragraph.text))
+
+        self.mainFrame.resetTextSizeChanged()

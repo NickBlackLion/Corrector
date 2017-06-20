@@ -11,6 +11,7 @@ class MainFrame(Frame):
         self.__job = None
         self.textSizeChanged = False
         self.categories = []
+        self.makeBackArray = []
 
         self.pack()
         self.__makeMainTextFrame()
@@ -35,6 +36,7 @@ class MainFrame(Frame):
 
         self.textArea = Text(master=textFrame)
         scrollbar = Scrollbar(master=textFrame)
+        self.textArea.bind('<Key>', self.pressed)
 
         self.textArea.config(selectbackground='green', yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.textArea.yview)
@@ -78,5 +80,15 @@ class MainFrame(Frame):
     def resetTextSizeChanged(self):
         self.textSizeChanged = False
 
-    def getCategoryes(self):
+    def getCategories(self):
         return self.categories
+
+    def getMackBackArray(self):
+        return self.makeBackArray
+
+    def pressed(self, event=None):
+        if event.keysym.isalpha():
+            self.makeBackArray.append(self.textArea.get('1.0', END))
+            if len(self.makeBackArray) > 30:
+                self.makeBackArray = self.makeBackArray[len(self.makeBackArray)-10:len(self.makeBackArray)]
+                print(self.makeBackArray)
