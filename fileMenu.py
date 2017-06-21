@@ -6,14 +6,26 @@ from docx import Document
 
 class FileMenu:
     def __init__(self, root, mainMenu=None, mainFrame=None):
+        self.commandArray = ['Новий Ctrl+N', 'Вiдкрити Ctrl+O', 'Зберегти Ctrl+S', 'Зберегти як...', 'Вийти']
+        self.functionArray = [lambda e=None: self.__newFile(), lambda e=None: self.__openFile(),
+                              lambda e=None: self.__saveFile(), lambda e=None: self.__saveAsFile(),
+                              lambda e=None: self.__exit()]
+
+        self.commandDict = {}
+
+        self.bindsCommandArray = ['<Control-n>', '<Control-o>', '<Control-s>']
+
+        for index in range(len(self.commandArray)):
+            self.commandDict[self.commandArray[index]] = self.functionArray[index]
+
         self.fileMenu = Menu(mainMenu, tearoff=0)
-        self.fileMenu.add_command(label='Новий Ctrl+N', command=lambda: self.__newFile())
-        self.fileMenu.add_separator()
-        self.fileMenu.add_command(label='Вiдкрити Ctrl+O', command=lambda: self.__openFile())
-        self.fileMenu.add_command(label='Зберегти Ctrl+S', command=lambda: self.__saveFile())
-        self.fileMenu.add_command(label='Зберегти як...', command=lambda: self.__saveAsFile())
-        self.fileMenu.add_separator()
-        self.fileMenu.add_command(label='Вийти', command=lambda: self.__exit())
+
+        for index, key in enumerate(self.commandDict):
+            if index == 1 or index == 4:
+                self.fileMenu.add_separator()
+            self.fileMenu.add_command(label=self.commandArray[index],
+                                      command=self.commandDict[self.commandArray[index]])
+
         mainMenu.add_cascade(label='Файл', menu=self.fileMenu)
 
         self.fileTypes = (("pictures", "*.docx"), ("all types", "*.*"))
@@ -23,9 +35,8 @@ class FileMenu:
         self.textLength = 0
         self.openFilePath = None
 
-        root.bind('<Control-o>', lambda e: self.__openFile())
-        root.bind('<Control-s>', lambda e: self.__saveFile())
-        root.bind('<Control-n>', lambda e: self.__newFile())
+        for index in range(len(self.bindsCommandArray)):
+            root.bind(self.bindsCommandArray[index], self.commandDict[self.commandArray[index]])
 
     def __openFile(self):
         if self.mainFrame.isTextChanged():

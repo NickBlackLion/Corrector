@@ -1,5 +1,5 @@
-from tkinter import END
 from tkinter import messagebox
+from tkinter import *
 import re
 import shelve
 
@@ -58,3 +58,20 @@ def searcher(var, textArea, PackCanvas):
     else:
         for reg in getattr(PackCanvas, 'allRegex'):
             textArea.tag_delete(reg)
+
+
+def search(root, textArea=None):
+    topWin = Toplevel(root)
+    topWin.title('Найти')
+
+    frame = Frame(topWin)
+    frame.pack(expand=YES, fill=BOTH)
+    textLine = Entry(frame)
+    textLine.pack(expand=YES, fill=X)
+
+    Button(frame, text='Найти').pack(side=LEFT, expand=YES, fill=X)
+    Button(frame, text='Отмена', command=lambda: topWin.destroy()).pack(side=LEFT, expand=YES, fill=X)
+
+
+def searchMore():
+    pass

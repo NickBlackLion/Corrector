@@ -4,30 +4,27 @@ from clipboardHandler import *
 
 class SpecialMenu:
     def __init__(self, root, mainMenu, mainFrame):
-        self.commandArray = ['Вырезать Ctrl+X', 'Копировать Ctrl+C', 'Вставить Ctrl+V', 'Отменить Ctrl+Z']
-        self.patternDict = {self.commandArray[0]: lambda: cutToClipboard(self.root, self.pattern),
-                            self.commandArray[1]: lambda: copyToClipboard(self.root, self.pattern),
-                            self.commandArray[2]: lambda: pasteFromClipboard(self.root, self.pattern)}
-
-        self.hintDict = {self.commandArray[0]: lambda: cutToClipboard(self.root, self.hint),
-                         self.commandArray[1]: lambda: copyToClipboard(self.root, self.hint),
-                         self.commandArray[2]: lambda: pasteFromClipboard(self.root, self.hint)}
-
         self.specialMenu = Menu(mainMenu, tearoff=0)
         for value in mainFrame.getCategories():
-            self.specialMenu.add_command(label='Добавить {0}'.format(value.lower()), command=lambda lab=value: self.__makeCommonWindow(lab))
+            self.specialMenu.add_command(label='Добавить {0}'.format(value.lower()),
+                                         command=lambda lab=value: self.__makeCommonWindow(lab))
+
         mainMenu.add_cascade(label='Специальные функции', menu=self.specialMenu)
 
-        self.root = root
-        self.mainFrame = mainFrame
+        self.specialMenu.add_separator()
+        self.submenu = Menu(self.specialMenu, tearoff=0)
 
-        self.vowels = '[аеєиіїоуюя]'
-        self.consonants = '[бвгґджзйклмнпрстфхцчшщ]'
-        self.voicelessConsonants = '[пхктшчсц]'
-        self.space = '\\s'
-        self.otherLetters = '\\w+'
-        self.double = '{2}'
-        self.either = '|'
+        for value in mainFrame.getCategories():
+            self.submenu.add_command(label='Просмотреть {0}'.format(value.lower()))
+
+        self.specialMenu.add_cascade(label='Просмотреть словари', menu=self.submenu)
+
+        self.root = root
+        self.textArea = mainFrame.getTextArea()
+
+        self.titles = ['Добавить гласные', 'Добавить согласные', 'Добавить глухие\nсогласные',
+                        'Добавить пробел', 'Добавить\n"остальные буквы"', 'Добавить\nудвоение буквы', 'Добавить "или"']
+        self.commandsArray = ['[аеєиіїоуюя]', '[бвгґджзйклмнпрстфхцчшщ]', '[пхктшчсц]', '\\s', '\\w+', '{2}', '|']
 
         self.frameConf = {'relief': SOLID, 'bd': 1}
         self.padConf = {'padx': 5, 'pady': 5, 'expand': YES, 'fill': BOTH}
@@ -67,20 +64,10 @@ class SpecialMenu:
         helpButtonFrame = Frame(master)
         helpButtonFrame.pack(self.padConf, side=RIGHT)
 
-        Button(helpButtonFrame, text='Добавить гласные',
-               command=lambda string=self.vowels: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
-        Button(helpButtonFrame, text='Добавить согласные',
-               command=lambda string=self.consonants: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
-        Button(helpButtonFrame, text='Добавить глухие\nсогласные',
-               command=lambda string=self.voicelessConsonants: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
-        Button(helpButtonFrame, text='Добавить пробел',
-               command=lambda string=self.space: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
-        Button(helpButtonFrame, text='Добавить\n"остальные буквы"',
-               command=lambda string=self.otherLetters: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
-        Button(helpButtonFrame, text='Добавить\nудвоение буквы',
-               command=lambda string=self.double: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
-        Button(helpButtonFrame, text='Добавить "или"',
-               command=lambda string=self.either: self.__takeStrings(string)).pack(expand=YES, fill=BOTH)
+        for index in range(len(self.titles)):
+            Button(helpButtonFrame, text=self.titles[index],
+                   command=lambda string=self.commandsArray[index]: self.__takeStrings(string))\
+                .pack(expand=YES, fill=BOTH)
 
     def __takeStrings(self, mark):
         self.pattern.insert(END, mark)
@@ -99,16 +86,16 @@ class SpecialMenu:
 
     def __createPatternPopupMenu(self):
         popup = Menu(master=self.root, tearoff=0)
-        popup.add_command(label=self.commandArray[3], command=self.patternDict[self.commandArray[3]])
-        popup.add_command(label=self.commandArray[0], command=self.patternDict[self.commandArray[0]])
-        popup.add_command(label=self.commandArray[1], command=self.patternDict[self.commandArray[1]])
-        popup.add_command(label=self.commandArray[2], command=self.patternDict[self.commandArray[2]])
+
+        popup.add_command(label='Вырезать', command=lambda: cutToClipboard(self.root, self.pattern))
+        popup.add_command(label='Копировать', command=lambda: copyToClipboard(self.root, self.pattern))
+        popup.add_command(label='Вставить', command=lambda: pasteFromClipboard(self.root, self.pattern))
         return popup
 
     def __createHintPopupMenu(self):
         popup = Menu(master=self.root, tearoff=0)
-        popup.add_command(label=self.commandArray[3], command=self.hintDict[self.commandArray[3]])
-        popup.add_command(label=self.commandArray[0], command=self.hintDict[self.commandArray[0]])
-        popup.add_command(label=self.commandArray[1], command=self.hintDict[self.commandArray[1]])
-        popup.add_command(label=self.commandArray[2], command=self.hintDict[self.commandArray[2]])
+
+        popup.add_command(label='Вырезать', command=lambda: cutToClipboard(self.root, self.hint))
+        popup.add_command(label='Копировать', command=lambda: copyToClipboard(self.root, self.hint))
+        popup.add_command(label='Вставить', command=lambda: pasteFromClipboard(self.root, self.hint))
         return popup
