@@ -59,8 +59,8 @@ class Searcher:
                             if not lastMatched or matched is None:
                                 break
 
-                        self.textArea.tag_bind(reg, '<Button-1>', getattr(self.packCanvas, 'createFoo'))
-                        self.textArea.tag_bind('text', '<Button-1>', getattr(self.packCanvas, 'deleteFoo'))
+                        self.textArea.tag_bind(reg, '<Button-1>', self.packCanvas.createHint)
+                        self.textArea.tag_bind('text', '<Button-1>', self.packCanvas.deleteHint)
 
                     row += 1
         else:

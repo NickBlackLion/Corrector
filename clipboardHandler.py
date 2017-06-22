@@ -21,10 +21,12 @@ def pasteFromClipboard(root, textArea, makeBackArray=None):
 
     try:
         textArea.delete(SEL_FIRST, SEL_LAST)
-        textArea.insert(CURRENT, root.clipboard_get())
+        textArea.insert(INSERT, root.clipboard_get())
+        print('in try')
     except TclError:
         try:
-            textArea.insert(CURRENT, root.clipboard_get())
+            textArea.insert(INSERT, root.clipboard_get())
+            print('in except')
         except TclError:
             messagebox.showinfo('', 'В буффере пусто')
 
@@ -40,6 +42,7 @@ def cutToClipboard(root, textArea, makeBackArray=None):
 
     try:
         root.clipboard_clear()
+        root.clipboard_append(textArea.get(SEL_FIRST, SEL_LAST))
         textArea.delete(SEL_FIRST, SEL_LAST)
     except TclError:
         root.clipboard_append(fromClipboard)
