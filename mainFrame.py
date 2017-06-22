@@ -1,4 +1,5 @@
 from packCanvas import *
+import re
 
 
 # Main window class
@@ -7,6 +8,7 @@ class MainFrame(Frame):
     def __init__(self, master):
         Frame.__init__(self, master=master)
 
+        self.master = master
         self.textLength = 0
         self.__job = None
         self.textSizeChanged = False
@@ -57,17 +59,18 @@ class MainFrame(Frame):
         commonFrame.pack(side=RIGHT, anchor='n')
 
         color = ['green', '#1283FF', '#AC8312', 'yellow', 'blue', 'red', 'brown']
+        packCanvases = {}
 
         with open('categoryes', encoding='utf-8') as f:
             for (index, word) in enumerate(f):
                 category = word.strip('\n')
                 self.categories.append(category)
-                corrector = PackCanvas(canvas, category, color[index])
                 var = IntVar()
+                corrector = PackCanvas(self.textArea, self.master, canvas, category, color[index], packCanvases)
                 Checkbutton(variable=var,
                             master=checkFrame,
                             text=category,
-                            command=lambda x=var, y=corrector: y.packCanvas(x.get(), self.textArea)).pack(anchor='w')
+                            command=lambda x=var, y=corrector: y.packCanvas(x.get())).pack(anchor='w')
 
     def __isTextSizeChanged(self):
         if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
@@ -87,8 +90,10 @@ class MainFrame(Frame):
         return self.makeBackArray
 
     def pressed(self, event=None):
+        matched = re.match('space|BackSpace|Return', event.keysym)
+
         if event.keysym.isalpha():
-            self.makeBackArray.append(self.textArea.get('1.0', END))
-            if len(self.makeBackArray) > 30:
-                self.makeBackArray = self.makeBackArray[len(self.makeBackArray)-10:len(self.makeBackArray)]
-                print(self.makeBackArray)
+            if matched is not None or len(event.keysym) == 1:
+                self.makeBackArray.append(self.textArea.get('1.0', END))
+                if len(self.makeBackArray) > 30:
+                    self.makeBackArray = self.makeBackArray[len(self.makeBackArray)-10:len(self.makeBackArray)]

@@ -23,7 +23,7 @@ class SpecialMenu:
         self.textArea = mainFrame.getTextArea()
 
         self.titles = ['Добавить гласные', 'Добавить согласные', 'Добавить глухие\nсогласные',
-                        'Добавить пробел', 'Добавить\n"остальные буквы"', 'Добавить\nудвоение буквы', 'Добавить "или"']
+                       'Добавить пробел', 'Добавить\n"остальные буквы"', 'Добавить\nудвоение буквы', 'Добавить "или"']
         self.commandsArray = ['[аеєиіїоуюя]', '[бвгґджзйклмнпрстфхцчшщ]', '[пхктшчсц]', '\\s', '\\w+', '{2}', '|']
 
         self.frameConf = {'relief': SOLID, 'bd': 1}
@@ -57,8 +57,10 @@ class SpecialMenu:
         okCancelButtonFrame = Frame(master)
         okCancelButtonFrame.pack(self.padConf)
 
-        Button(okCancelButtonFrame, text='Ok', command=lambda: self.__insertIntoDB(label)).pack(side=LEFT, expand=YES, fill=X)
-        Button(okCancelButtonFrame, text='Cancel', command=lambda: master.destroy()).pack(side=LEFT, expand=YES, fill=X)
+        Button(okCancelButtonFrame, text='Ok',
+               command=lambda: self.__insertIntoDB(label)).pack(side=LEFT, expand=YES, fill=X)
+        Button(okCancelButtonFrame, text='Cancel',
+               command=lambda: master.destroy()).pack(side=LEFT, expand=YES, fill=X)
 
     def __makeHelpButtons(self, master):
         helpButtonFrame = Frame(master)

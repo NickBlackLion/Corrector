@@ -40,7 +40,6 @@ def cutToClipboard(root, textArea, makeBackArray=None):
 
     try:
         root.clipboard_clear()
-        root.clipboard_append(textArea.get(SEL_FIRST, SEL_LAST))
         textArea.delete(SEL_FIRST, SEL_LAST)
     except TclError:
         root.clipboard_append(fromClipboard)
