@@ -4,7 +4,7 @@ from searcher import *
 
 # Class that makes hints ans comments on right panel
 class PackCanvas:
-    def __init__(self, textArea, master, canvas, categoryName, color, packCanvases):
+    def __init__(self, textArea, master, canvas, categoryName, color, packCanvases, shapes):
         self.categoryName = categoryName
         self.color = color
         self.canvas = canvas
@@ -15,7 +15,7 @@ class PackCanvas:
         self.allRegex = {}
         self.hint = None
 
-        self.shapes = []
+        self.shapes = shapes
         self.searcher = Searcher(master, self.textArea, self)
 
     # Method that adds comments and hints under each other
@@ -42,5 +42,5 @@ class PackCanvas:
 
     def deleteHint(self, event=None):
         if len(self.shapes):
-            for index in self.shapes:
-                self.canvas.delete(index)
+            for key in self.shapes:
+                self.canvas.delete(key)

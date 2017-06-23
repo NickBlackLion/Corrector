@@ -95,20 +95,30 @@ class FileMenu:
             self.__save(self.saveFilePath.name)
 
     def __save(self, pathToFile):
+        self.mainFrame.resetTextLength()
         doc = Document()
-        doc.add_paragraph(self.textArea.get('1.0', END).strip('\n'))
+        text = self.textArea.get('1.0', END).split('\n')
+        for key, value in enumerate(text):
+            doc.add_paragraph(value)
+            self.mainFrame.setTextLength(len(value))
+            if key == (len(text) - 1):
+                self.mainFrame.setTextLength(1)
+
         doc.save(str(pathToFile))
         messagebox.showinfo('Сохранение файла', 'Файл сохранен')
-        for paragraph in doc.paragraphs:
-            self.mainFrame.setTextLength(len(paragraph.text))
 
         self.mainFrame.resetTextSizeChanged()
 
     def __open(self):
+        self.mainFrame.resetTextLength()
         self.openFilePath = filedialog.askopenfile(filetypes=self.fileTypes)
         if self.openFilePath:
             doc = Document(self.openFilePath.name)
-            for paragraph in doc.paragraphs:
+            for key, paragraph in enumerate(doc.paragraphs):
                 self.textArea.insert(INSERT, paragraph.text)
-                self.mainFrame.setTextLength(len(paragraph.text))
+                if key != (len(doc.paragraphs) - 1):
+                    self.textArea.insert(INSERT, '\n')
+                    self.mainFrame.setTextLength(len(paragraph.text))
+                else:
+                    self.mainFrame.setTextLength(len(paragraph.text) + 1)
                 paragraph.clear()

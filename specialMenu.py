@@ -11,14 +11,6 @@ class SpecialMenu:
 
         mainMenu.add_cascade(label='Специальные функции', menu=self.specialMenu)
 
-        self.specialMenu.add_separator()
-        self.submenu = Menu(self.specialMenu, tearoff=0)
-
-        for value in mainFrame.getCategories():
-            self.submenu.add_command(label='Просмотреть {0}'.format(value.lower()))
-
-        self.specialMenu.add_cascade(label='Просмотреть словари', menu=self.submenu)
-
         self.root = root
         self.textArea = mainFrame.getTextArea()
 
@@ -34,10 +26,10 @@ class SpecialMenu:
         self.top.title('Добавить {0}'.format(label.lower()))
 
         self.__makeHelpButtons(self.top)
-        self.__makeEntryFrame(self.top)
+        self.__makeEntryFrame(self.top, label)
         self.__makeOkCancelButton(self.top, label)
 
-    def __makeEntryFrame(self, master):
+    def __makeEntryFrame(self, master, label):
         areaSize = {'width': 70, 'height': 10}
 
         entryFrame = Frame(master)
@@ -45,13 +37,19 @@ class SpecialMenu:
 
         Label(entryFrame, text='Шаблон поиска').pack()
         self.pattern = Text(entryFrame, areaSize)
+        self.checkWordLabel = Label(entryFrame, text='Слово или выражение отсутствует в базе', fg='green')
+
+        self.checkWordLabel.pack(expand=YES, fill=X)
         self.pattern.pack(expand=YES, fill=X)
         self.pattern.bind('<Button-3>', self.__doPatternPopup)
 
         Label(entryFrame, text='Комментарий').pack()
         self.hint = Text(entryFrame, areaSize)
+
         self.hint.pack(expand=YES, fill=X)
         self.hint.bind('<Button-3>', self.__doHintPopup)
+
+        self.__checkWord(self.top, label)
 
     def __makeOkCancelButton(self, master, label):
         okCancelButtonFrame = Frame(master)
@@ -101,3 +99,16 @@ class SpecialMenu:
         popup.add_command(label='Копировать', command=lambda: copyToClipboard(self.root, self.hint))
         popup.add_command(label='Вставить', command=lambda: pasteFromClipboard(self.root, self.hint))
         return popup
+
+    # TODO Подумать над конструкцие, как выводить тот или иной маркер при наличии
+    # TODO отсутствии ключа
+    def __checkWord(self, top, label):
+        with shelve.open(label) as f:
+            for key in f.keys():
+                print(key.strip('\n\r ') == self.pattern.get('1.0', END).strip('\n\r '))
+                if key.strip('\n\r ') == self.pattern.get('1.0', END).strip('\n\r '):
+                    self.checkWordLabel.config(text='Слово или конструкция уже есть в базе', fg='red')
+                else:
+                    self.checkWordLabel.config(text='Слово или выражение отсутствует в базе', fg='green')
+
+        top.after(100, self.__checkWord, top, label)

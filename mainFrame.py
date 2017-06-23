@@ -15,7 +15,7 @@ class MainFrame(Frame):
         self.categories = []
         self.makeBackArray = []
 
-        self.pack()
+        self.pack(expand=YES, fill=BOTH)
         self.__makeMainTextFrame()
         self.__rightPanelFrame()
         self.__isTextSizeChanged()
@@ -24,7 +24,10 @@ class MainFrame(Frame):
         return self.textArea
 
     def setTextLength(self, textLength=0):
-        self.textLength = textLength
+        self.textLength += textLength
+
+    def resetTextLength(self):
+        self.textLength = 0
 
     def clearTextArea(self):
         self.textArea.delete('1.0', END)
@@ -34,7 +37,7 @@ class MainFrame(Frame):
     # Main text area creating method
     def __makeMainTextFrame(self):
         textFrame = Frame(master=self)
-        textFrame.pack(side=LEFT)
+        textFrame.pack(side=LEFT, expand=YES, fill=BOTH)
 
         self.textArea = Text(master=textFrame)
         scrollbar = Scrollbar(master=textFrame)
@@ -44,7 +47,7 @@ class MainFrame(Frame):
         scrollbar.config(command=self.textArea.yview)
 
         scrollbar.pack(side=RIGHT, fill=Y, expand=YES)
-        self.textArea.pack(side=LEFT)
+        self.textArea.pack(side=LEFT, expand=YES, fill=BOTH)
 
     # Frame with check buttons
     def __rightPanelFrame(self):
@@ -60,13 +63,14 @@ class MainFrame(Frame):
 
         color = ['green', '#1283FF', '#AC8312', 'yellow', 'blue', 'red', 'brown']
         packCanvases = {}
+        shapes = []
 
         with open('categoryes', encoding='utf-8') as f:
             for (index, word) in enumerate(f):
                 category = word.strip('\n')
                 self.categories.append(category)
                 var = IntVar()
-                corrector = PackCanvas(self.textArea, self.master, canvas, category, color[index], packCanvases)
+                corrector = PackCanvas(self.textArea, self.master, canvas, category, color[index], packCanvases, shapes)
                 Checkbutton(variable=var,
                             master=checkFrame,
                             text=category,
