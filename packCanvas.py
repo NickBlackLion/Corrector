@@ -13,7 +13,6 @@ class PackCanvas:
         self.textArea = textArea
 
         self.allRegex = {}
-        self.hint = None
 
         self.shapes = shapes
         self.searcher = Searcher(master, self.textArea, self)
@@ -27,7 +26,7 @@ class PackCanvas:
             self.deleteHint()
             self.allRegex.clear()
 
-    def createHint(self, event=None):
+    def createHint(self, event=None, reg=None):
         for key in self.packCanvases:
             self.packCanvases[key].deleteHint()
 
@@ -35,7 +34,7 @@ class PackCanvas:
         tup1 = (10, 5)
 
         shape = self.canvas.create_rectangle(tup, fill='white')
-        text = self.canvas.create_text(tup1, anchor=NW, text=self.hint, width=self.canvas.winfo_width() - 5)
+        text = self.canvas.create_text(tup1, anchor=NW, text=self.allRegex[reg], width=self.canvas.winfo_width() - 5)
 
         self.shapes.append(shape)
         self.shapes.append(text)

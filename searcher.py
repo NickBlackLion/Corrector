@@ -2,6 +2,8 @@ from tkinter import messagebox
 from tkinter import *
 import re
 import shelve
+import os.path
+import os
 
 
 class Searcher:
@@ -17,7 +19,14 @@ class Searcher:
             f = None
 
             try:
-                f = shelve.open(getattr(self.packCanvas, 'categoryName'))
+                path = getattr(self.packCanvas, 'categoryName')
+                currPath = os.path.curdir + '//' + path
+                currFile = currPath + '//' + path
+
+                if not os.path.exists(currPath):
+                    os.mkdir(currPath)
+
+                f = shelve.open(currFile)
                 for i in f:
                     getattr(self.packCanvas, 'allRegex')[i.strip('\n')] = f[i]
 
@@ -54,12 +63,11 @@ class Searcher:
                                                       '{0}.{1}'.format(row, lastMatched))
                                 self.textArea.tag_configure(reg, background=getattr(self.packCanvas, 'color'))
                                 self.textArea.tag_raise("sel")
-                                setattr(self.packCanvas, 'hint', getattr(self.packCanvas, 'allRegex')[reg])
 
                             if not lastMatched or matched is None:
                                 break
 
-                        self.textArea.tag_bind(reg, '<Button-1>', self.packCanvas.createHint)
+                        self.textArea.tag_bind(reg, '<Button-1>', lambda e, r=reg: self.packCanvas.createHint(e, r))
                         self.textArea.tag_bind('text', '<Button-1>', self.packCanvas.deleteHint)
 
                     row += 1

@@ -1,5 +1,6 @@
 import shelve
 from clipboardHandler import *
+import os.path
 
 
 class SpecialMenu:
@@ -73,7 +74,9 @@ class SpecialMenu:
         self.pattern.insert(END, mark)
 
     def __insertIntoDB(self, dbName):
-        with shelve.open(dbName) as f:
+        currPath = os.path.curdir + '//' + dbName
+
+        with shelve.open(currPath + '//' + dbName) as f:
             f[self.pattern.get('1.0', END)] = self.hint.get('1.0', END)
         messagebox.showinfo('', 'Слово добавленно в базу')
         self.top.destroy()
@@ -100,15 +103,20 @@ class SpecialMenu:
         popup.add_command(label='Вставить', command=lambda: pasteFromClipboard(self.root, self.hint))
         return popup
 
-    # TODO Подумать над конструкцие, как выводить тот или иной маркер при наличии
-    # TODO отсутствии ключа
     def __checkWord(self, top, label):
-        with shelve.open(label) as f:
+        isInFile = False
+        currPath = os.path.curdir + '//' + label
+        currFile = currPath + '//' + label
+
+        if not os.path.exists(currFile):
+            os.mkdir(currPath)
+
+        with shelve.open(currFile) as f:
             for key in f.keys():
-                print(key.strip('\n\r ') == self.pattern.get('1.0', END).strip('\n\r '))
                 if key.strip('\n\r ') == self.pattern.get('1.0', END).strip('\n\r '):
                     self.checkWordLabel.config(text='Слово или конструкция уже есть в базе', fg='red')
-                else:
+                    isInFile = True
+                elif not isInFile:
                     self.checkWordLabel.config(text='Слово или выражение отсутствует в базе', fg='green')
 
         top.after(100, self.__checkWord, top, label)
