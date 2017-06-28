@@ -22,11 +22,9 @@ def pasteFromClipboard(root, textArea, makeBackArray=None):
     try:
         textArea.delete(SEL_FIRST, SEL_LAST)
         textArea.insert(INSERT, root.clipboard_get())
-        print('in try')
     except TclError:
         try:
             textArea.insert(INSERT, root.clipboard_get())
-            print('in except')
         except TclError:
             messagebox.showinfo('', 'В буффере пусто')
 

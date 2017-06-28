@@ -62,7 +62,7 @@ class MainFrame(Frame):
 
         commonFrame.pack(side=RIGHT, anchor='n')
 
-        color = ['green', '#1283FF', '#AC8312', 'yellow', 'blue', 'red', 'brown']
+        color = ['green', '#1283FF', '#AC8312', 'yellow', '#DDA0DD']
         packCanvases = {}
         shapes = []
 

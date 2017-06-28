@@ -35,8 +35,12 @@ class PackCanvas:
         tup1 = (10, 5)
 
         try:
-            line = self.allRegex[reg]
-            line += '\nЗапропонована заміна - ' + self.replacements[reg]
+            line = ''
+            if self.allRegex[reg.lower()] != '\n':
+                line = self.allRegex[reg.lower()]
+                line += '\nЗапропонована заміна - ' + self.replacements[reg.lower()]
+            else:
+                line = 'Запропонована заміна - ' + self.replacements[reg.lower()]
         except KeyError:
             line = self.allRegex[reg]
 

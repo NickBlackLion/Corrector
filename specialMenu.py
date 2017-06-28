@@ -36,7 +36,10 @@ class SpecialMenu:
             self.__makeReplacementText(self.top)
             self.__makeOkCancelButton(self.top, label)
         elif label == self.categories[4]:
-            pass
+            self.__makeHelpButtons(self.top)
+            self.__makeEntryFrame(self.top, label)
+            self.__makeSynonymText(self.top)
+            self.__makeOkCancelButton(self.top, label)
         else:
             self.__makeHelpButtons(self.top)
             self.__makeEntryFrame(self.top, label)
@@ -47,18 +50,18 @@ class SpecialMenu:
         entryFrame.pack(self.padConf)
 
         Label(entryFrame, text='Шаблон пошуку').pack()
-        self.pattern = Text(entryFrame, self.areaSize)
+        self.textPattern = Text(entryFrame, self.areaSize)
         self.checkWordLabel = Label(entryFrame, text='Слово або вираз відсутні у базі', fg='green')
 
         self.checkWordLabel.pack(expand=YES, fill=X)
-        self.pattern.pack(expand=YES, fill=X)
-        self.pattern.bind('<Button-3>', self.__doPatternPopup)
+        self.textPattern.pack(expand=YES, fill=X)
+        self.textPattern.bind('<Button-3>', self.__doPatternPopup)
 
         Label(entryFrame, text='Коментар').pack()
-        self.hint = Text(entryFrame, self.areaSize)
+        self.textHint = Text(entryFrame, self.areaSize)
 
-        self.hint.pack(expand=YES, fill=X)
-        self.hint.bind('<Button-3>', self.__doHintPopup)
+        self.textHint.pack(expand=YES, fill=X)
+        self.textHint.bind('<Button-3>', self.__doHintPopup)
 
         self.__checkWord(self.top, label)
 
@@ -66,6 +69,13 @@ class SpecialMenu:
         Label(master, text='Яку заміну запропонувати').pack()
         self.textReplace = Text(master, self.areaSize)
         self.textReplace.pack()
+        self.textReplace.bind('<Button-3>', self.__doReplacePopup)
+
+    def __makeSynonymText(self, master):
+        Label(master, text='Який синонім запропонувати').pack()
+        self.textReplace = Text(master, self.areaSize)
+        self.textReplace.pack()
+        self.textReplace.bind('<Button-3>', self.__doReplacePopup)
 
     def __makeOkCancelButton(self, master, label):
         okCancelButtonFrame = Frame(master)
@@ -86,24 +96,24 @@ class SpecialMenu:
                 .pack(expand=YES, fill=BOTH)
 
     def __takeStrings(self, mark):
-        self.pattern.insert(END, mark)
+        self.textPattern.insert(END, mark)
 
     def __insertIntoDB(self, dbName):
         currPath = os.path.curdir + '//' + dbName
 
         with shelve.open(currPath + '//' + dbName) as f:
-            f[self.pattern.get('1.0', END)] = self.hint.get('1.0', END)
+            f[self.textPattern.get('1.0', END).lower()] = self.textHint.get('1.0', END)
 
-        self.__insertRotatingIntoDB(dbName)
+        if dbName == self.categories[3] or dbName == self.categories[4]:
+            self.__insertRotatingIntoDB(dbName)
 
         messagebox.showinfo('', 'Слово додане до бази')
-        self.top.destroy()
 
     def __insertRotatingIntoDB(self, dbName):
         currPath = os.path.curdir + '//' + dbName
 
         with shelve.open(currPath + '//' + dbName + '-rotating') as f:
-            f[self.pattern.get('1.0', END)] = self.textReplace.get('1.0', END)
+            f[self.textPattern.get('1.0', END).lower()] = self.textReplace.get('1.0', END)
 
     def __doPatternPopup(self, event):
         self.__createPatternPopupMenu().tk_popup(event.x_root, event.y_root)
@@ -111,20 +121,31 @@ class SpecialMenu:
     def __doHintPopup(self, event):
         self.__createHintPopupMenu().tk_popup(event.x_root, event.y_root)
 
+    def __doReplacePopup(self, event):
+        self.__createRepacePopupMenu().tk_popup(event.x_root, event.y_root)
+
     def __createPatternPopupMenu(self):
         popup = Menu(master=self.root, tearoff=0)
 
-        popup.add_command(label=self.labels[0], command=lambda: cutToClipboard(self.root, self.pattern))
-        popup.add_command(label=self.labels[1], command=lambda: copyToClipboard(self.root, self.pattern))
-        popup.add_command(label=self.labels[2], command=lambda: pasteFromClipboard(self.root, self.pattern))
+        popup.add_command(label=self.labels[0], command=lambda: cutToClipboard(self.root, self.textPattern))
+        popup.add_command(label=self.labels[1], command=lambda: copyToClipboard(self.root, self.textPattern))
+        popup.add_command(label=self.labels[2], command=lambda: pasteFromClipboard(self.root, self.textPattern))
         return popup
 
     def __createHintPopupMenu(self):
         popup = Menu(master=self.root, tearoff=0)
 
-        popup.add_command(label=self.labels[0], command=lambda: cutToClipboard(self.root, self.hint))
-        popup.add_command(label=self.labels[1], command=lambda: copyToClipboard(self.root, self.hint))
-        popup.add_command(label=self.labels[2], command=lambda: pasteFromClipboard(self.root, self.hint))
+        popup.add_command(label=self.labels[0], command=lambda: cutToClipboard(self.root, self.textHint))
+        popup.add_command(label=self.labels[1], command=lambda: copyToClipboard(self.root, self.textHint))
+        popup.add_command(label=self.labels[2], command=lambda: pasteFromClipboard(self.root, self.textHint))
+        return popup
+
+    def __createRepacePopupMenu(self):
+        popup = Menu(master=self.root, tearoff=0)
+
+        popup.add_command(label=self.labels[0], command=lambda: cutToClipboard(self.root, self.textReplace))
+        popup.add_command(label=self.labels[1], command=lambda: copyToClipboard(self.root, self.textReplace))
+        popup.add_command(label=self.labels[2], command=lambda: pasteFromClipboard(self.root, self.textReplace))
         return popup
 
     def __checkWord(self, top, label):
@@ -137,7 +158,7 @@ class SpecialMenu:
 
         with shelve.open(currFile) as f:
             for key in f.keys():
-                if key.strip('\n\r ') == self.pattern.get('1.0', END).strip('\n\r '):
+                if key.strip('\n\r ') == self.textPattern.get('1.0', END).strip('\n\r ').lower():
                     self.checkWordLabel.config(text='Слово або вираз є у базі', fg='red')
                     isInFile = True
                 elif not isInFile:

@@ -106,9 +106,10 @@ class FileMenu:
         text = self.textArea.get('1.0', END).split('\n')
         for key, value in enumerate(text):
             doc.add_paragraph(value)
-            self.mainFrame.setTextLength(len(value))
-            if key == (len(text) - 1):
-                self.mainFrame.setTextLength(1)
+            if value.endswith('\n'):
+                self.mainFrame.setTextLength(len(value) + 1)
+            else:
+                self.mainFrame.setTextLength(len(value))
 
         doc.save(str(pathToFile))
         messagebox.showinfo('Збереження файла', 'Файл збережен')
@@ -122,11 +123,9 @@ class FileMenu:
             doc = Document(self.openFilePath.name)
             for key, paragraph in enumerate(doc.paragraphs):
                 self.textArea.insert(INSERT, paragraph.text)
-                if key != (len(doc.paragraphs) - 1):
-                    self.textArea.insert(INSERT, '\n')
-                    self.mainFrame.setTextLength(len(paragraph.text))
-                else:
+                if paragraph.text.endswith('\n'):
                     self.mainFrame.setTextLength(len(paragraph.text) + 1)
-                paragraph.clear()
+                else:
+                    self.mainFrame.setTextLength(len(paragraph.text))
 
             self.root.title(self.mainName + ' - ' + os.path.basename(self.openFilePath.name))
