@@ -4,7 +4,7 @@ from editMenu import *
 
 if __name__ == '__main__':
     root = Tk()
-    root.title('Corrector')
+    root.title('Коректор')
     root.resizable(False, True)
 
     mainframe = MainFrame(master=root)

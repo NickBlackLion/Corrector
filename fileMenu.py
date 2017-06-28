@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from docx import Document
+import os.path
 
 
 class FileMenu:
@@ -34,13 +35,14 @@ class FileMenu:
         self.root = root
         self.textLength = 0
         self.openFilePath = None
+        self.mainName = 'Коректор'
 
         for index in range(len(self.bindsCommandArray)):
             root.bind(self.bindsCommandArray[index], self.commandDict[self.commandArray[index]])
 
     def __openFile(self):
         if self.mainFrame.isTextChanged():
-            answer = messagebox.askyesnocancel('Открытие файла', 'Вы изменили текст. Хотите его сохранить?')
+            answer = messagebox.askyesnocancel('Відкриття файла', 'Ви змінили текст. Бажаєте його зберегти?')
             if answer is None:
                 pass
             elif answer:
@@ -62,23 +64,26 @@ class FileMenu:
 
     def __newFile(self):
         if self.mainFrame.isTextChanged():
-            answer = messagebox.askyesnocancel('Новый файл', 'Вы изменили текст. Хотите его сохранить?')
+            answer = messagebox.askyesnocancel('Новий файл', 'Ви змінили текст. Бажаєте його зберегти?')
             if answer is None:
                 pass
             elif answer:
                 self.__saveFile()
                 self.mainFrame.clearTextArea()
                 self.openFilePath = None
+                self.root.title(self.mainName)
             elif not answer:
                 self.mainFrame.clearTextArea()
                 self.openFilePath = None
+                self.root.title(self.mainName)
         else:
             self.mainFrame.clearTextArea()
             self.openFilePath = None
+            self.root.title(self.mainName)
 
     def __exit(self):
         if self.mainFrame.isTextChanged():
-            answer = messagebox.askyesnocancel('Выход', 'Вы изменили текст. Хотите его сохранить?')
+            answer = messagebox.askyesnocancel('Вихід', 'Ви змінили текст. Бажаєте його зберегти?')
             if answer is None:
                 pass
             elif answer:
@@ -93,6 +98,7 @@ class FileMenu:
         self.saveFilePath = filedialog.asksaveasfile(filetypes=self.fileTypes)
         if self.saveFilePath:
             self.__save(self.saveFilePath.name)
+            self.root.title(self.mainName + ' - ' + os.path.basename(self.saveFilePath.name))
 
     def __save(self, pathToFile):
         self.mainFrame.resetTextLength()
@@ -105,7 +111,7 @@ class FileMenu:
                 self.mainFrame.setTextLength(1)
 
         doc.save(str(pathToFile))
-        messagebox.showinfo('Сохранение файла', 'Файл сохранен')
+        messagebox.showinfo('Збереження файла', 'Файл збережен')
 
         self.mainFrame.resetTextSizeChanged()
 
@@ -122,3 +128,5 @@ class FileMenu:
                 else:
                     self.mainFrame.setTextLength(len(paragraph.text) + 1)
                 paragraph.clear()
+
+            self.root.title(self.mainName + ' - ' + os.path.basename(self.openFilePath.name))

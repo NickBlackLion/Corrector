@@ -1,5 +1,6 @@
 from packCanvas import *
 import re
+import os.path
 
 
 # Main window class
@@ -77,8 +78,10 @@ class MainFrame(Frame):
                             command=lambda x=var, y=corrector: y.packCanvas(x.get())).pack(anchor='w')
 
     def __isTextSizeChanged(self):
-        if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength:
+        if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength and not self.textSizeChanged:
             self.textSizeChanged = True
+            self.master.title(os.path.basename(self.master.title()) + '*')
+
         self.__job = self.after(500, self.__isTextSizeChanged)
 
     def isTextChanged(self):
@@ -86,6 +89,7 @@ class MainFrame(Frame):
 
     def resetTextSizeChanged(self):
         self.textSizeChanged = False
+        self.master.title(self.master.title().strip('*'))
 
     def getCategories(self):
         return self.categories

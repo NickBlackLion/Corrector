@@ -8,7 +8,7 @@ class EditMenu:
         self.textArea = mainFrame.getTextArea()
 
         searcher = Searcher(root=self.root, textArea=self.textArea)
-        self.commandArray = ['Отменить Ctrl+Z', 'Вырезать Ctrl+X', 'Копировать Ctrl+C', 'Вставить Ctrl+V', 'Найти...']
+        self.commandArray = ['Відмінити Ctrl+Z', 'Вирізати Ctrl+X', 'Копіювати Ctrl+C', 'Вставити Ctrl+V', 'Знайти...']
         self.functionArray = [lambda: makeBack(self.textArea, mainFrame.getMackBackArray()),
                               lambda: cutToClipboard(self.root, self.textArea, mainFrame.getMackBackArray()),
                               lambda: copyToClipboard(self.root, self.textArea),

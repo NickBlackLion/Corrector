@@ -13,6 +13,7 @@ class PackCanvas:
         self.textArea = textArea
 
         self.allRegex = {}
+        self.replacements = {}
 
         self.shapes = shapes
         self.searcher = Searcher(master, self.textArea, self)
@@ -33,8 +34,14 @@ class PackCanvas:
         tup = (2, 2, self.canvas.winfo_width() - 5, self.canvas.winfo_height() - 5)
         tup1 = (10, 5)
 
+        try:
+            line = self.allRegex[reg]
+            line += '\nЗапропонована заміна - ' + self.replacements[reg]
+        except KeyError:
+            line = self.allRegex[reg]
+
         shape = self.canvas.create_rectangle(tup, fill='white')
-        text = self.canvas.create_text(tup1, anchor=NW, text=self.allRegex[reg], width=self.canvas.winfo_width() - 5)
+        text = self.canvas.create_text(tup1, anchor=NW, text=line, width=self.canvas.winfo_width() - 5)
 
         self.shapes.append(shape)
         self.shapes.append(text)
