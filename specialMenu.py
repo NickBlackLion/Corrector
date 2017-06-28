@@ -153,7 +153,7 @@ class SpecialMenu:
         currPath = os.path.curdir + '//' + label
         currFile = currPath + '//' + label
 
-        if not os.path.exists(currFile):
+        if not os.path.exists(currPath):
             os.mkdir(currPath)
 
         with shelve.open(currFile) as f:

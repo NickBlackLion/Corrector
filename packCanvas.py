@@ -32,7 +32,8 @@ class PackCanvas:
             self.packCanvases[key].deleteHint()
 
         tup = (2, 2, self.canvas.winfo_width() - 5, self.canvas.winfo_height() - 5)
-        tup1 = (10, 5)
+        tup1 = (35, 5)
+        tup2 = (10, 5, 30, 16)
 
         try:
             line = ''
@@ -45,10 +46,12 @@ class PackCanvas:
             line = self.allRegex[reg]
 
         shape = self.canvas.create_rectangle(tup, fill='white')
-        text = self.canvas.create_text(tup1, anchor=NW, text=line, width=self.canvas.winfo_width() - 5)
+        square = self.canvas.create_rectangle(tup2, fill=self.color)
+        text = self.canvas.create_text(tup1, anchor=NW, text=line, width=self.canvas.winfo_width() - 40)
 
         self.shapes.append(shape)
         self.shapes.append(text)
+        self.shapes.append(square)
 
     def deleteHint(self, event=None):
         if len(self.shapes):

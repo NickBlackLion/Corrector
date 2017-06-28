@@ -75,7 +75,9 @@ class MainFrame(Frame):
                 Checkbutton(variable=var,
                             master=checkFrame,
                             text=category,
-                            command=lambda x=var, y=corrector: y.packCanvas(x.get())).pack(anchor='w')
+                            command=lambda x=var, y=corrector: y.packCanvas(x.get())).grid(column=0, row=index, sticky='w')
+
+                Frame(checkFrame, bg=color[index], width=20, height=8).grid(column=1, row=index)
 
     def __isTextSizeChanged(self):
         if len(self.textArea.get('1.0', END).strip('\n')) != self.textLength and not self.textSizeChanged:
