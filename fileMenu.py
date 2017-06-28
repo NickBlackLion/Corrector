@@ -47,13 +47,10 @@ class FileMenu:
                 pass
             elif answer:
                 self.__saveFile()
-                self.mainFrame.clearTextArea()
                 self.__open()
             elif not answer:
-                self.mainFrame.clearTextArea()
                 self.__open()
         else:
-            self.mainFrame.clearTextArea()
             self.__open()
 
     def __saveFile(self):
@@ -117,9 +114,10 @@ class FileMenu:
         self.mainFrame.resetTextSizeChanged()
 
     def __open(self):
-        self.mainFrame.resetTextLength()
         self.openFilePath = filedialog.askopenfile(filetypes=self.fileTypes)
         if self.openFilePath:
+            self.mainFrame.resetTextLength()
+            self.mainFrame.clearTextArea()
             doc = Document(self.openFilePath.name)
             for key, paragraph in enumerate(doc.paragraphs):
                 self.textArea.insert(INSERT, paragraph.text)
