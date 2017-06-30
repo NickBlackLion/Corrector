@@ -24,7 +24,7 @@ class Searcher:
                 currPath = os.path.curdir + '//' + path
                 currFile = currPath + '//' + path
 
-                with open('categoryes') as f:
+                with open('categoryes', encoding='utf-8') as f:
                     for value in f:
                         self.categories.append(value.strip('\n'))
 

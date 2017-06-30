@@ -29,6 +29,7 @@ class SpecialMenu:
     def __makeCommonWindow(self, label):
         self.top = Toplevel(master=self.root)
         self.top.title('Добавити {0}'.format(label.lower()))
+        self.top.resizable(False, False)
 
         if label == self.categories[3]:
             self.__makeHelpButtons(self.top)
