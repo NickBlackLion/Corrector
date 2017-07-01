@@ -36,6 +36,7 @@ class FileMenu:
         self.textLength = 0
         self.openFilePath = None
         self.mainName = 'Коректор'
+        self.fileName = None
 
         for index in range(len(self.bindsCommandArray)):
             root.bind(self.bindsCommandArray[index], self.commandDict[self.commandArray[index]])
@@ -54,8 +55,8 @@ class FileMenu:
             self.__open()
 
     def __saveFile(self):
-        if self.openFilePath:
-            self.__save(self.openFilePath.name)
+        if self.fileName:
+            self.__save(self.fileName.name)
         else:
             self.__saveAsFile()
 
@@ -92,10 +93,10 @@ class FileMenu:
             self.root.quit()
 
     def __saveAsFile(self):
-        self.saveFilePath = filedialog.asksaveasfile(filetypes=self.fileTypes)
-        if self.saveFilePath:
-            self.__save(self.saveFilePath.name)
-            self.root.title(self.mainName + ' - ' + os.path.basename(self.saveFilePath.name))
+        self.fileName = filedialog.asksaveasfile(filetypes=self.fileTypes, defaultextension='.docx')
+        if self.fileName:
+            self.__save(self.fileName.name)
+            self.root.title(self.mainName + ' - ' + os.path.basename(self.fileName.name))
 
     def __save(self, pathToFile):
         self.mainFrame.resetTextLength()
@@ -114,11 +115,11 @@ class FileMenu:
         self.mainFrame.resetTextSizeChanged()
 
     def __open(self):
-        self.openFilePath = filedialog.askopenfile(filetypes=self.fileTypes)
-        if self.openFilePath:
+        self.fileName = filedialog.askopenfile(filetypes=self.fileTypes)
+        if self.fileName:
             self.mainFrame.resetTextLength()
             self.mainFrame.clearTextArea()
-            doc = Document(self.openFilePath.name)
+            doc = Document(self.fileName.name)
             for key, paragraph in enumerate(doc.paragraphs):
                 self.textArea.insert(INSERT, paragraph.text)
                 if paragraph.text.endswith('\n'):
@@ -126,4 +127,4 @@ class FileMenu:
                 else:
                     self.mainFrame.setTextLength(len(paragraph.text))
 
-            self.root.title(self.mainName + ' - ' + os.path.basename(self.openFilePath.name))
+            self.root.title(self.mainName + ' - ' + os.path.basename(self.fileName.name))
