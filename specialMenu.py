@@ -16,13 +16,14 @@ class SpecialMenu:
         self.textArea = mainFrame.getTextArea()
         self.categories = mainFrame.getCategories()
 
-        self.titles = ['Добавити голосні', 'Добавити приголосні', 'Добавити глухі\nприголосні',
-                       'Добавити пробіл', 'Добавити\n"інші букви"', 'Добавити\nподвоєння', 'Добавити "або"']
-        self.commandsArray = ['[аеєиіїоуюя]', '[бвгґджзйклмнпрстфхцчшщ]', '[пхктшчсц]', '\\s', '\\w+', '{2}', '|']
+        self.titles = ['Голосні', 'Приголосні', 'Глухі приголосні',
+                       'Пробіл', '"Інші букви"', 'Подвоєння', '"Або"', 'Будь-який символ', 'Цифра', 'Крапка']
+        self.commandsArray = ['[аеєиіїоуюя]', '[бвгґджзйклмнпрстфхцчшщ]', '[пхктшчсц]',
+                              '\\s', '\\w+', '{2}', '|', '.', '[0-9]', '\.']
 
         self.frameConf = {'relief': SOLID, 'bd': 1}
         self.padConf = {'padx': 5, 'pady': 5, 'expand': YES, 'fill': BOTH}
-        self.areaSize = {'width': 70, 'height': 10}
+        self.areaSize = {'width': 70, 'height': 12}
 
         self.labels = ['Вирізати', 'Скопіювати', 'Вставити']
 
@@ -109,6 +110,7 @@ class SpecialMenu:
             self.__insertRotatingIntoDB(dbName)
 
         messagebox.showinfo('', 'Слово додане до бази')
+        self.top.destroy()
 
     def __insertRotatingIntoDB(self, dbName):
         currPath = os.path.curdir + '//' + dbName

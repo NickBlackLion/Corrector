@@ -71,7 +71,8 @@ class MainFrame(Frame):
                 category = word.strip('\n')
                 self.categories.append(category)
                 var = IntVar()
-                corrector = PackCanvas(self.textArea, self.master, canvas, category, color[index], packCanvases, shapes)
+                corrector = PackCanvas(self.textArea, self.master, self.categories, canvas,
+                                       category, color[index], packCanvases, shapes)
                 Checkbutton(variable=var,
                             master=checkFrame,
                             text=category,

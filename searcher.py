@@ -24,6 +24,9 @@ class Searcher:
                 currPath = os.path.curdir + '//' + path
                 currFile = currPath + '//' + path
 
+                if not os.path.exists(currPath):
+                    os.mkdir(currPath)
+
                 with open('categoryes', encoding='utf-8') as f:
                     for value in f:
                         self.categories.append(value.strip('\n'))
@@ -32,9 +35,6 @@ class Searcher:
                     with shelve.open(currFile + '-rotating') as f:
                         for i in f:
                             getattr(self.packCanvas, 'replacements')[i.strip('\n')] = f[i]
-
-                if not os.path.exists(currPath):
-                    os.mkdir(currPath)
 
                 f = shelve.open(currFile)
                 for i in f:

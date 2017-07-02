@@ -9,7 +9,7 @@ class EditMenu:
 
         searcher = Searcher(root=self.root, textArea=self.textArea)
         self.commandArray = ['Відмінити Ctrl+Z', 'Вирізати Ctrl+X', 'Копіювати Ctrl+C', 'Вставити Ctrl+V', 'Знайти...']
-        self.functionArray = [lambda: makeBack(self.textArea, mainFrame.getMackBackArray()),
+        self.functionArray = [lambda e=None: makeBack(self.textArea, mainFrame.getMackBackArray()),
                               lambda: cutToClipboard(self.root, self.textArea, mainFrame.getMackBackArray()),
                               lambda: copyToClipboard(self.root, self.textArea),
                               lambda: pasteFromClipboard(self.root, self.textArea, mainFrame.getMackBackArray()),
@@ -30,6 +30,7 @@ class EditMenu:
 
         mainMenu.add_cascade(label='Правка', menu=self.editMenu)
         mainFrame.getTextArea().bind('<Button-3>', self.__doPopup)
+        mainFrame.getTextArea().bind('<Control-z>', self.functionArray[0])
 
     def __doPopup(self, event):
         self.__createPopupMenu().tk_popup(event.x_root, event.y_root)
