@@ -29,7 +29,7 @@ class FileMenu:
 
         mainMenu.add_cascade(label='Файл', menu=self.fileMenu)
 
-        self.fileTypes = (("pictures", "*.docx"), ("all types", "*.*"))
+        self.fileTypes = (("Documents Microsoft Word", "*.docx"), ("all types", "*.*"))
         self.textArea = mainFrame.textArea
         self.mainFrame = mainFrame
         self.root = root
@@ -116,6 +116,10 @@ class FileMenu:
 
     def __open(self):
         self.fileName = filedialog.askopenfile(filetypes=self.fileTypes)
+        if not self.fileName.name.endswith('.docx'):
+            messagebox.showwarning('', 'Формат файлу не підтримується')
+            return
+
         if self.fileName:
             self.mainFrame.resetTextLength()
             self.mainFrame.clearTextArea()

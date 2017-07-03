@@ -38,10 +38,10 @@ class PackCanvas:
 
         line = ''
         sline = ''
-        if self.categoryName == self.categories[3]:
+        if self.categoryName == self.categories[len(self.categories) - 2]:
             sline = 'Запропонована заміна: '
             print(sline)
-        elif self.categoryName == self.categories[4]:
+        elif self.categoryName == self.categories[len(self.categories) - 1]:
             sline = 'Синоніми: '
             print(sline)
 

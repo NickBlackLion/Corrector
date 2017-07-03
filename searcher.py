@@ -31,7 +31,7 @@ class Searcher:
                     for value in f:
                         self.categories.append(value.strip('\n'))
 
-                if path == self.categories[3] or path == self.categories[4]:
+                if path == self.categories[len(self.categories) - 2] or path == self.categories[len(self.categories) - 1]:
                     with shelve.open(currFile + '-rotating') as f:
                         for i in f:
                             getattr(self.packCanvas, 'replacements')[i.strip('\n')] = f[i]

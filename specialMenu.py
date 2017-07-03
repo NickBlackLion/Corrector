@@ -32,12 +32,12 @@ class SpecialMenu:
         self.top.title('Добавити {0}'.format(label.lower()))
         self.top.resizable(False, False)
 
-        if label == self.categories[3]:
+        if label == self.categories[len(self.categories) - 2]:
             self.__makeHelpButtons(self.top)
             self.__makeEntryFrame(self.top, label)
             self.__makeReplacementText(self.top)
             self.__makeOkCancelButton(self.top, label)
-        elif label == self.categories[4]:
+        elif label == self.categories[len(self.categories) - 1]:
             self.__makeHelpButtons(self.top)
             self.__makeEntryFrame(self.top, label)
             self.__makeSynonymText(self.top)
@@ -106,7 +106,7 @@ class SpecialMenu:
         with shelve.open(currPath + '//' + dbName) as f:
             f[self.textPattern.get('1.0', END).lower()] = self.textHint.get('1.0', END)
 
-        if dbName == self.categories[3] or dbName == self.categories[4]:
+        if dbName == self.categories[len(self.categories) - 2] or dbName == self.categories[len(self.categories) - 1]:
             self.__insertRotatingIntoDB(dbName)
 
         messagebox.showinfo('', 'Слово додане до бази')
