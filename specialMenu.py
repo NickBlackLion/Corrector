@@ -99,7 +99,7 @@ class SpecialMenu:
                 .pack(expand=YES, fill=BOTH)
 
     def __takeStrings(self, mark):
-        self.textPattern.insert(END, mark)
+        self.textPattern.insert(INSERT, mark)
 
     def __insertIntoDB(self, dbName):
         currPath = os.path.curdir + '//' + dbName

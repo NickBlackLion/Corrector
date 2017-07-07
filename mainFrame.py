@@ -1,6 +1,7 @@
 from packCanvas import *
 import re
 import os.path
+import shutil
 
 
 # Main window class
@@ -20,6 +21,16 @@ class MainFrame(Frame):
         self.__makeMainTextFrame()
         self.__rightPanelFrame()
         self.__isTextSizeChanged()
+
+        mainDirectory = None
+        backUpDirectory = None
+
+        with open('pathways', encoding='utf-8') as f:
+            mainDirectory = f.readline()
+            backUpDirectory = f.readline()
+
+        if mainDirectory != 'None' and backUpDirectory != 'None':
+            shutil.copytree(mainDirectory.strip('\n'), backUpDirectory.strip('\n'))
 
     def getTextArea(self):
         return self.textArea
