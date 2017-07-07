@@ -8,7 +8,8 @@ import shutil
 
 class FileMenu:
     def __init__(self, root, mainMenu=None, mainFrame=None):
-        self.commandArray = ['Новий Ctrl+N', 'Вiдкрити Ctrl+O', 'Зберегти Ctrl+S', 'Зберегти як...', 'Настройки', 'Вийти']
+        self.commandArray = ['Новий Ctrl+N', 'Вiдкрити Ctrl+O', 'Зберегти Ctrl+S',
+                             'Зберегти як...', 'Налаштування', 'Вийти']
         self.functionArray = [lambda e=None: self.__newFile(), lambda e=None: self.__openFile(),
                               lambda e=None: self.__saveFile(), lambda e=None: self.__saveAsFile(),
                               lambda e=None: self.__savePathOption(), lambda e=None: self.__exit()]
@@ -173,20 +174,20 @@ class FileMenu:
     def __getMainDirectory(self, entry):
         text = filedialog.askdirectory()
         if text:
+            self.mainDirectory = text + '/База даних Corrector'
             entry.delete('1.0', END)
-            entry.insert(END, text)
-            self.mainDirectory = text
+            entry.insert(END, self.mainDirectory)
 
     def __getBackUpDirectory(self, entry):
         text = filedialog.askdirectory()
         if text:
+            self.backUpDirectory = text + '/Резервна копія Corrector'
             entry.delete('1.0', END)
-            entry.insert(END, text)
-            self.backUpDirectory = text
+            entry.insert(END, self.backUpDirectory)
 
     def __setToFile(self, top):
         with open('pathways', 'w') as f:
-            f.write(self.mainDirectory)
+            f.write(self.mainDirectory + '\n')
             f.write(self.backUpDirectory)
 
         top.destroy()

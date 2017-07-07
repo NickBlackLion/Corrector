@@ -13,7 +13,6 @@ class Searcher:
         self.packCanvas = packCanvas
 
         self.searchingWord = ''
-        self.categories = []
 
     def searcher(self, var):
         if var:
@@ -21,20 +20,18 @@ class Searcher:
 
             try:
                 path = getattr(self.packCanvas, 'categoryName')
-                currPath = os.path.curdir + '//' + path
-                currFile = currPath + '//' + path
+                currPath = None
+
+                with open('pathways', encoding='utf-8') as f:
+                    currPath = f.readline()
+                    currPath = currPath.strip('\n') + '/' + path
 
                 if not os.path.exists(currPath):
                     os.mkdir(currPath)
 
-                with open('categoryes', encoding='utf-8') as f:
-                    for value in f:
-                        self.categories.append(value.strip('\n'))
+                currFile = currPath + '/' + path
 
-                if path == self.categories[len(self.categories) - 2] or path == self.categories[len(self.categories) - 1]:
-                    with shelve.open(currFile + '-rotating') as f:
-                        for i in f:
-                            getattr(self.packCanvas, 'replacements')[i.strip('\n')] = f[i]
+                print(currPath, currFile)
 
                 f = shelve.open(currFile)
                 for i in f:

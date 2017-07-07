@@ -1,8 +1,6 @@
 from packCanvas import *
 import re
 import os.path
-import shutil
-
 
 # Main window class
 class MainFrame(Frame):
@@ -21,16 +19,6 @@ class MainFrame(Frame):
         self.__makeMainTextFrame()
         self.__rightPanelFrame()
         self.__isTextSizeChanged()
-
-        mainDirectory = None
-        backUpDirectory = None
-
-        with open('pathways', encoding='utf-8') as f:
-            mainDirectory = f.readline()
-            backUpDirectory = f.readline()
-
-        if mainDirectory != 'None' and backUpDirectory != 'None':
-            shutil.copytree(mainDirectory.strip('\n'), backUpDirectory.strip('\n'))
 
     def getTextArea(self):
         return self.textArea
@@ -82,7 +70,7 @@ class MainFrame(Frame):
                 category = word.strip('\n')
                 self.categories.append(category)
                 var = IntVar()
-                corrector = PackCanvas(self.textArea, self.master, self.categories, canvas,
+                corrector = PackCanvas(self.textArea, self.master, canvas,
                                        category, color[index], packCanvases, shapes)
                 Checkbutton(variable=var,
                             master=checkFrame,

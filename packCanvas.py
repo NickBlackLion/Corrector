@@ -4,17 +4,15 @@ from searcher import *
 
 # Class that makes hints ans comments on right panel
 class PackCanvas:
-    def __init__(self, textArea, master, categories, canvas, categoryName, color, packCanvases, shapes):
+    def __init__(self, textArea, master, canvas, categoryName, color, packCanvases, shapes):
         self.categoryName = categoryName
         self.color = color
         self.canvas = canvas
         self.packCanvases = packCanvases
         self.packCanvases[categoryName] = self
         self.textArea = textArea
-        self.categories = categories
 
         self.allRegex = {}
-        self.replacements = {}
 
         self.shapes = shapes
         self.searcher = Searcher(master, self.textArea, self)
@@ -36,23 +34,7 @@ class PackCanvas:
         tup1 = (35, 5)
         tup2 = (10, 5, 30, 16)
 
-        line = ''
-        sline = ''
-        if self.categoryName == self.categories[len(self.categories) - 2]:
-            sline = 'Запропонована заміна: '
-            print(sline)
-        elif self.categoryName == self.categories[len(self.categories) - 1]:
-            sline = 'Синоніми: '
-            print(sline)
-
-        try:
-            if self.allRegex[reg.lower()] != '\n':
-                line = self.allRegex[reg.lower()]
-                line += '\n' + sline + self.replacements[reg.lower()]
-            else:
-                line = sline + self.replacements[reg.lower()]
-        except KeyError:
-            line = self.allRegex[reg]
+        line = self.allRegex[reg]
 
         shape = self.canvas.create_rectangle(tup, fill='white')
         square = self.canvas.create_rectangle(tup2, fill=self.color)
