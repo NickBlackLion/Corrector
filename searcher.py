@@ -24,14 +24,15 @@ class Searcher:
 
                 with open('pathways', encoding='utf-8') as f:
                     currPath = f.readline()
-                    currPath = currPath.strip('\n') + '/' + path
+                    if currPath.strip('\n') == 'None':
+                        messagebox.showinfo('', 'Задайте будь ласка шлях для сбереження бази даних')
+                        return
+                    currPath = currPath.strip('\n') + '//' + path
 
                 if not os.path.exists(currPath):
-                    os.mkdir(currPath)
+                    os.makedirs(currPath)
 
-                currFile = currPath + '/' + path
-
-                print(currPath, currFile)
+                currFile = currPath + '//' + path
 
                 f = shelve.open(currFile)
                 for i in f:

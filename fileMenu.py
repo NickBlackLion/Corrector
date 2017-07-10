@@ -3,7 +3,6 @@ from tkinter import filedialog
 from tkinter import messagebox
 from docx import Document
 import os.path
-import shutil
 
 
 class FileMenu:
@@ -46,8 +45,8 @@ class FileMenu:
         self.root.protocol('WM_DELETE_WINDOW', self.__exit)
 
         with open('pathways', encoding='utf-8') as f:
-            self.mainDirectory = f.readline()
-            self.backUpDirectory = f.readline()
+            self.mainDirectory = f.readline().replace('//', '/').strip('\n')
+            self.backUpDirectory = f.readline().replace('//', '/').strip('\n')
 
     def __openFile(self):
         if self.mainFrame.isTextChanged():
@@ -159,8 +158,10 @@ class FileMenu:
         Label(insFrame, text='Место для резервного копирования').grid(column=0, row=2)
         backUpDirectory.grid(column=0, row=3)
 
-        Button(insFrame, text='...', command=lambda x=mainDirectory, y=self.mainDirectory: self.__getMainDirectory(x)).grid(column=1, row=1)
-        Button(insFrame, text='...', command=lambda x=backUpDirectory, y=self.backUpDirectory: self.__getBackUpDirectory(x)).grid(column=1, row=3)
+        Button(insFrame, text='...',
+               command=lambda x=mainDirectory, y=self.mainDirectory: self.__getMainDirectory(x)).grid(column=1, row=1)
+        Button(insFrame, text='...',
+               command=lambda x=backUpDirectory, y=self.backUpDirectory: self.__getBackUpDirectory(x)).grid(column=1, row=3)
 
         fr = Frame(insFrame)
         fr.grid(column=0, row=4)
@@ -186,8 +187,8 @@ class FileMenu:
             entry.insert(END, self.backUpDirectory)
 
     def __setToFile(self, top):
-        with open('pathways', 'w') as f:
-            f.write(self.mainDirectory + '\n')
-            f.write(self.backUpDirectory)
+        with open('pathways', 'w', encoding='utf-8') as f:
+            f.write(self.mainDirectory.replace('/', '//') + '\n')
+            f.write(self.backUpDirectory.replace('/', '//'))
 
         top.destroy()

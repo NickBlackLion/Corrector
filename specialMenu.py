@@ -81,14 +81,17 @@ class SpecialMenu:
     def __insertIntoDB(self, dbName):
         currPath = None
 
-        with open('pathways') as f:
+        with open('pathways', encoding='utf-8') as f:
             currPath = f.readline()
-            currPath = currPath.strip('\n') + '/' + dbName
+            if currPath.strip('\n') == 'None':
+                messagebox.showinfo('', 'Задайте будь ласка шлях для сбереження бази даних')
+                return
+            currPath = currPath.strip('\n') + '//' + dbName
 
         if not os.path.exists(currPath):
-            os.mkdir(currPath)
+            os.makedirs(currPath)
 
-        with shelve.open(currPath + '/' + dbName) as f:
+        with shelve.open(currPath + '//' + dbName) as f:
             f[self.textPattern.get('1.0', END).lower()] = self.textHint.get('1.0', END)
 
         messagebox.showinfo('', 'Слово додане до бази')
@@ -120,14 +123,17 @@ class SpecialMenu:
         isInFile = False
 
         currPath = None
-        with open('pathways') as f:
+        with open('pathways', encoding='utf-8') as f:
             currPath = f.readline()
-            currPath = currPath.strip('\n') + '/' + label
+            if currPath.strip('\n') == 'None':
+                messagebox.showinfo('', 'Задайте будь ласка шлях для сбереження бази даних')
+                return
+            currPath = currPath.strip('\n') + '//' + label
 
-        currFile = currPath + '/' + label
+        currFile = currPath + '//' + label
 
         if not os.path.exists(currPath):
-            os.mkdir(currPath)
+            os.makedirs(currPath)
 
         with shelve.open(currFile) as f:
             for key in f.keys():
