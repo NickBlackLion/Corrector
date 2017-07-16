@@ -185,7 +185,8 @@ class App(QWidget):
         else:
             QMessageBox.information(self, 'Помилка роботи з базою', 'Завантажте базу або оберіть шаблон для роботи')
 
-if __name__ == '__main__':
+
+def runCorrector():
     app = QApplication(sys.argv)
     ex = App()
-    sys.exit(app.exec_())
+    app.exec_()

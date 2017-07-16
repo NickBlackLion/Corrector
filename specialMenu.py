@@ -1,6 +1,7 @@
 import shelve
 from clipboardHandler import *
 import os.path
+import dbredactor as DBCorrector
 
 
 class SpecialMenu:
@@ -10,6 +11,8 @@ class SpecialMenu:
             self.specialMenu.add_command(label='Добавити {0}'.format(value.lower()),
                                          command=lambda lab=value: self.__makeCommonWindow(lab))
 
+        self.specialMenu.add_separator()
+        self.specialMenu.add_command(label='Коррестор бази даних', command=lambda: DBCorrector.runCorrector())
         mainMenu.add_cascade(label='Специальні функції', menu=self.specialMenu)
 
         self.root = root

@@ -6,7 +6,7 @@ import shutil
 if __name__ == '__main__':
     root = Tk()
     root.title('Коректор')
-    root.resizable(False, True)
+    root.resizable(False, False)
 
     mainframe = MainFrame(master=root)
     MainMenu(master=root, mainFrame=mainframe)

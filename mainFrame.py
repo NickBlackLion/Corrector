@@ -1,6 +1,7 @@
 from packCanvas import *
 import re
 import os.path
+import fastMenuPanel
 
 # Main window class
 class MainFrame(Frame):
@@ -16,6 +17,8 @@ class MainFrame(Frame):
         self.makeBackArray = []
 
         self.pack(expand=YES, fill=BOTH)
+
+        self.fastPanel = fastMenuPanel.TopFastMenu(self)
         self.__makeMainTextFrame()
         self.__rightPanelFrame()
         self.__isTextSizeChanged()
@@ -42,6 +45,7 @@ class MainFrame(Frame):
         self.textArea = Text(master=textFrame)
         scrollbar = Scrollbar(master=textFrame)
         self.textArea.bind('<Key>', self.pressed)
+        self.fastPanel.setTextArea(self.textArea)
 
         self.textArea.config(selectbackground='green', yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.textArea.yview)
