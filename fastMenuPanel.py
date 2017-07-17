@@ -15,13 +15,17 @@ class TopFastMenu:
         self.sizeVar = IntVar()
         self.sizeVar.set(sizesList[10])
         self.font = Font(family=self.fontsVar.get(), size=self.sizeVar.get())
+
+        self.boldDict = {}
+        self.boldIndex = 0
+
         self.selectedFont = Font(family=self.fontsVar.get(), size=self.sizeVar.get())
 
         OptionMenu(frame, self.fontsVar, *fontsList, command=lambda arg: self.__setFontToAllText()).pack(side=LEFT)
         OptionMenu(frame, self.sizeVar, *sizesList, command=lambda arg: self.__setFontToAllText()).pack(side=LEFT)
 
         Button(frame, text='B', font=Font(size='12', weight='bold'),
-               command=lambda: self.__setBoldFont()).pack(side=LEFT)
+               command=lambda: self.__setBoldFont(self.boldDict)).pack(side=LEFT)
 
         Button(frame, text='I', font=Font(size='12', slant='italic'),
                command=lambda: self.__setItalicFont()).pack(side=LEFT)
@@ -38,17 +42,84 @@ class TopFastMenu:
         self.text = textArea
         self.text.pack(expand=YES, fill=BOTH)
 
-    def __setBoldFont(self):
-        self.text.tag_add('selected', SEL_FIRST, SEL_LAST)
-        self.selectedFont.config(weight='bold')
-        self.text.tag_config('selected', font=self.selectedFont)
+    def __setBoldFont(self, insDict):
+        ind1 = self.text.index(SEL_FIRST)
+        ind2 = self.text.index(SEL_LAST)
 
-    def __setItalicFont(self):
-        self.text.tag_add('selected', SEL_FIRST, SEL_LAST)
-        self.selectedFont.config(slant='italic')
-        self.text.tag_config('selected', font=self.selectedFont)
+        insKey = None
 
-    def __setUndelineFont(self):
-        self.text.tag_add('selected', SEL_FIRST, SEL_LAST)
-        self.selectedFont.config(underline='1')
-        self.text.tag_config('selected', font=self.selectedFont)
+        for key in insDict:
+            if (ind1, ind2) == insDict[key]:
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(),
+                                                    size=self.sizeVar.get(), weight='normal'))
+                insKey = key
+                break
+            elif ind1 > insDict[key][0] and ind2 == insDict[key][1]:
+                print('ind1 > insDict[key][0] and ind2 == insDict[key][1]')
+                self.text.tag_delete(key)
+                self.text.tag_add(key, insDict[key][0], ind1)
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[key] = (insDict[key][0], ind1)
+                break
+            elif ind1 == insDict[key][0] and ind2 < insDict[key][1]:
+                print('ind1 == insDict[key][0] and ind2 < insDict[key][1]')
+                self.text.tag_delete(key)
+                self.text.tag_add(key, ind2, insDict[key][1])
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[key] = (ind2, insDict[key][1])
+                break
+            elif ind2 == insDict[key][0]:
+                print('ind2 == insDict[key][0]')
+                self.text.tag_delete(key)
+                self.text.tag_add(key, ind1, insDict[key][1])
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[key] = (ind1, insDict[key][1])
+                break
+            elif ind1 == insDict[key][1]:
+                print('ind1 == insDict[key][1]')
+                self.text.tag_delete(key)
+                self.text.tag_add(key, insDict[key][0], ind2)
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[key] = (insDict[key][0], ind2)
+                break
+            elif ind1 == insDict[key][0] and ind2 > insDict[key][1]:
+                print('ind1 == insDict[key][0] and ind2 > insDict[key]')
+                self.text.tag_delete(key)
+                self.text.tag_add(key, ind1, ind2)
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[key] = (ind1, ind2)
+                break
+            elif ind1 < insDict[key][0] and ind2 == insDict[key][1]:
+                print('ind1 < insDict[key][0] and ind2 == insDict[key][1]')
+                self.text.tag_delete(key)
+                self.text.tag_add(key, ind1, ind2)
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[key] = (ind1, ind2)
+                break
+            elif ind1 > insDict[key][0] and ind2 < insDict[key][1]:
+                print('ind1 > insDict[key][0] and ind2 < insDict[key][1]')
+                indLast = insDict[key][1]
+                self.text.tag_delete(key)
+                self.text.tag_add(key, insDict[key][0], ind1)
+                self.text.tag_config(key, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[key] = (insDict[key][0], ind1)
+                print(insDict[key])
+
+                tag = 'selected' + str(self.boldIndex)
+                self.text.tag_add(tag, ind2, indLast)
+                self.text.tag_config(tag, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+                insDict[tag] = (ind2, indLast)
+                print(insDict[tag])
+                self.boldIndex += 1
+                break
+        else:
+            tag = 'selected' + str(self.boldIndex)
+            print('in else for')
+            self.text.tag_add(tag, ind1, ind2)
+            self.text.tag_config(tag, font=Font(family=self.fontsVar.get(), size=self.sizeVar.get(), weight='bold'))
+            insDict[tag] = (ind1, ind2)
+            self.boldIndex += 1
+
+        if insKey is not None:
+            print('in if insKey is not None')
+            del insDict[insKey]
